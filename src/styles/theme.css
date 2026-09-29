@@ -1,0 +1,130 @@
+/* ==========================================================================
+   RANTEA DESIGN SYSTEM - CENTRAL THEME SPECIFICATION
+   SlothUI Clean & Light Modern Flat Palette
+   
+   HOW TO CUSTOMIZE:
+   Simply change any color code below! All components, pages, cards, buttons,
+   borders, hover states, and text will instantly update across the whole site.
+   (Both HEX and RGB channels are provided so Tailwind opacity modifiers like
+    bg-sky-500/20 and border-dark-border/40 adapt automatically!)
+   ========================================================================== */
+
+:root {
+  /* ──────────────────────────────────────────────────────────────────────────
+     1. BRAND & PRIMARY ACCENT (SlothUI Vibrant Purple / Indigo)
+     ────────────────────────────────────────────────────────────────────────── */
+  --color-primary: #4F3DE6;
+  --color-primary-rgb: 79, 61, 230;
+
+  --color-primary-hover: #4332D1;
+  --color-primary-hover-rgb: 67, 50, 209;
+
+  --color-primary-active: #3827BA;
+  --color-primary-active-rgb: 56, 39, 186;
+
+  --color-primary-light: #EEF0FE;
+  --color-primary-light-rgb: 238, 240, 254;
+
+  --color-primary-text: #FFFFFF;
+
+  --color-accent: #6366F1;
+  --color-accent-rgb: 99, 102, 241;
+  --color-accent-hover: #4F46E5;
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     2. PAGE & SURFACE BACKGROUNDS (Light, Fresh & Clean)
+     ────────────────────────────────────────────────────────────────────────── */
+  --bg-page: #F4F6FC;                   /* Main viewport & body background */
+  --bg-page-rgb: 244, 246, 252;
+
+  --bg-card: #FFFFFF;                   /* Content cards, post boxes, modals */
+  --bg-card-rgb: 255, 255, 255;
+
+  --bg-card-hover: #F9FAFD;             /* Hover background for cards */
+  --bg-card-hover-rgb: 249, 250, 253;
+
+  --bg-surface: #FFFFFF;                /* Surface headers, dropdowns, popovers */
+  --bg-surface-rgb: 255, 255, 255;
+
+  --bg-subtle: #EEF2F7;                 /* Filter pills, secondary tags, code blocks */
+  --bg-subtle-rgb: 238, 242, 247;
+
+  --bg-input: #FFFFFF;                  /* Form inputs */
+  --bg-input-focus: #FFFFFF;
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     3. LEFT NAVIGATION SIDEBAR (SlothUI Rich Purple Panel)
+     ────────────────────────────────────────────────────────────────────────── */
+  --bg-sidebar: #4F3DE6;
+  --bg-sidebar-rgb: 79, 61, 230;
+
+  --bg-sidebar-hover: #4332D1;
+  --bg-sidebar-hover-rgb: 67, 50, 209;
+
+  --bg-sidebar-active: #3C29CA;
+  --bg-sidebar-active-rgb: 60, 41, 202;
+
+  --text-sidebar: #FFFFFF;
+  --text-sidebar-muted: #C7D2FE;
+  --border-sidebar: rgba(255, 255, 255, 0.15);
+  --badge-sidebar-bg: #FFFFFF;
+  --badge-sidebar-text: #4F3DE6;
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     4. TYPOGRAPHY & TEXT COLORS
+     ────────────────────────────────────────────────────────────────────────── */
+  --text-main: #111827;                 /* Headings, post titles, names (Slate-900) */
+  --text-main-rgb: 17, 24, 39;
+
+  --text-secondary: #4B5563;            /* Post body text, paragraphs (Slate-600) */
+  --text-secondary-rgb: 75, 85, 99;
+
+  --text-muted: #6B7280;                /* Meta info, timestamps, secondary labels (Slate-500) */
+  --text-muted-rgb: 107, 114, 128;
+
+  --text-placeholder: #9CA3AF;          /* Input field placeholders (Slate-400) */
+  --text-placeholder-rgb: 156, 163, 175;
+
+  --text-inverted: #FFFFFF;
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     5. BORDERS & DIVIDERS
+     ────────────────────────────────────────────────────────────────────────── */
+  --border-color: #E5E7EB;              /* Crisp 1px card and divider borders */
+  --border-color-rgb: 229, 231, 235;
+
+  --border-subtle: #F3F4F6;
+  --border-hover: #CBD5E1;
+  --border-focus: #4F3DE6;
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     6. SEMANTIC / STATUS COLORS
+     ────────────────────────────────────────────────────────────────────────── */
+  --color-success: #10B981;
+  --color-success-bg: #ECFDF5;
+  --color-success-border: #A7F3D0;
+  --color-success-text: #065F46;
+
+  --color-warning: #F59E0B;
+  --color-warning-bg: #FFFBEB;
+  --color-warning-border: #FDE68A;
+  --color-warning-text: #92400E;
+
+  --color-danger: #EF4444;
+  --color-danger-bg: #FEF2F2;
+  --color-danger-border: #FECACA;
+  --color-danger-text: #991B1B;
+
+  --color-info: #3B82F6;
+  --color-info-bg: #EFF6FF;
+  --color-info-border: #BFDBFE;
+  --color-info-text: #1E40AF;
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     7. REACTION EMOJI CHIPS
+     ────────────────────────────────────────────────────────────────────────── */
+  --reaction-laugh: #F59E0B;
+  --reaction-skull: #8B5CF6;
+  --reaction-cry: #06B6D4;
+  --reaction-fire: #F97316;
+}
