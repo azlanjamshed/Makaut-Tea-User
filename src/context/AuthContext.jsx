@@ -92,6 +92,24 @@ export const AuthProvider = ({ children }) => {
     throw new Error(res.message || 'Registration failed');
   };
 
+  const loginWithGoogle = async (payload) => {
+    const res = await authApi.googleLogin(payload);
+    if (res.success && res.token && res.data) {
+      saveSession(res.data, res.token);
+      return res;
+    }
+    throw new Error(res.message || 'Google authentication failed');
+  };
+
+  const submitOnboarding = async (onboardingData) => {
+    const res = await authApi.completeOnboarding(onboardingData);
+    if (res.success && res.data) {
+      updateUserState(res.data);
+      return res.data;
+    }
+    throw new Error(res.message || 'Failed to complete profile');
+  };
+
   const updateUserState = (updatedUser) => {
     setUser(updatedUser);
     localStorage.setItem('rant_user', JSON.stringify(updatedUser));
@@ -106,6 +124,8 @@ export const AuthProvider = ({ children }) => {
         isLoading,
         login,
         register,
+        loginWithGoogle,
+        submitOnboarding,
         logout,
         refreshUser,
         updateUserState,

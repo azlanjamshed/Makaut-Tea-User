@@ -18,6 +18,14 @@ export const getMe = async () => {
   return api.get('/auth/me');
 };
 
+export const googleLogin = async ({ credential, clientId, devUser } = {}) => {
+  return api.post('/auth/google', { credential, clientId, devUser });
+};
+
+export const completeOnboarding = async ({ department, semester, bio } = {}) => {
+  return api.put('/auth/onboarding', { department, semester, bio });
+};
+
 export const changePassword = async ({ currentPassword, newPassword }) => {
   return api.put('/auth/change-password', { currentPassword, newPassword });
 };
