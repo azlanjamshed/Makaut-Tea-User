@@ -47,14 +47,14 @@ const LoginPage = () => {
       <div className="flex flex-col items-center text-center mb-8">
         <Link to="/" className="inline-block group mb-3">
           <div className="w-20 h-20 rounded-3xl overflow-hidden flex items-center justify-center border-2 border-[var(--border-color)] group-hover:scale-105 transition-transform bg-white shadow-md">
-            <img src={appLogo} alt="Rantea" className="w-full h-full object-cover" />
+            <img src={appLogo} alt="MAKAU-TEA" className="w-full h-full object-cover" />
           </div>
         </Link>
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 font-display">
-          Ran<span className="text-[var(--color-primary)]">tea</span>
+          MAKAU<span className="text-[var(--color-primary)]">-TEA</span>
         </h1>
         <p className="text-xs sm:text-sm font-semibold text-[var(--color-primary)] mt-1 max-w-xs leading-relaxed">
-          Your own ranting platform
+          Campus discourse & rants
         </p>
         <p className="text-[11px] text-slate-500 max-w-xs mt-0.5">
           Campus confessions, anonymous thoughts & unfiltered tea.
@@ -78,9 +78,9 @@ const LoginPage = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="College Email"
+            label="Email"
             type="email"
-            placeholder="student@college.edu"
+            placeholder="name@example.com"
             icon={Mail}
             value={email}
             onChange={(e) => setEmail(e.target.value)}

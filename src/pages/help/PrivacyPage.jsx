@@ -37,7 +37,7 @@ const PrivacyPage = () => {
           </div>
 
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            When you register, you provide your name, college email, semester, and department.
+            When you register, you provide your name, email, semester, and department.
             Here is how your information is partitioned:
           </p>
 

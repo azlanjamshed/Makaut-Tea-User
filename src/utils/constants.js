@@ -1,14 +1,14 @@
 export const DEPARTMENTS = [
   'All',
-  'Computer Science (CSE)',
+  'Computer Science and Engineering (CSE)',
   'Information Technology (IT)',
-  'Electronics & Comm (ECE)',
-  'Mechanical Engg (ME)',
-  'Electrical Engg (EE)',
-  'Civil Engg (CE)',
-  'Business Admin (BBA/MBA)',
-  'Basic Sciences',
-  'Campus General',
+  'Forensic',
+  'Bio Informatic',
+  'LLB',
+  'VLSI',
+  'MTech',
+  'Biotech Building',
+  'Other',
 ];
 
 export const REPORT_REASONS = [

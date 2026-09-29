@@ -394,8 +394,8 @@ const ProfilePage = ({ onOpenEdit }) => {
         isOpen={showLogoutConfirm}
         onClose={() => setShowLogoutConfirm(false)}
         onConfirm={handleLogout}
-        title="Sign out of CampusRant?"
-        message="You will need your college email and password to log back in."
+        title="Sign out of MAKAU-TEA?"
+        message="You will need your email and password to log back in."
         confirmText="Log Out"
         isDestructive={false}
       />
