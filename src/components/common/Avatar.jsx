@@ -31,6 +31,8 @@ const Avatar = ({
         <img
           src={imageSrc}
           alt={name}
+          loading="lazy"
+          decoding="async"
           onError={() => setImgError(true)}
           className="w-full h-full object-cover"
         />

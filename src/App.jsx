@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,29 +13,44 @@ import DesktopSidebar from "./components/navigation/DesktopSidebar";
 import DesktopTrendingWidget from "./components/navigation/DesktopTrendingWidget";
 import MobileBottomNav from "./components/navigation/MobileBottomNav";
 import CreateRantSheet from "./components/rants/CreateRantSheet";
-import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import RantDetailsPage from "./pages/RantDetailsPage";
-import TrendingPage from "./pages/TrendingPage";
-import SearchPage from "./pages/SearchPage";
-import MyRantsPage from "./pages/MyRantsPage";
-import MyReactionsPage from "./pages/MyReactionsPage";
-import NotificationsPage from "./pages/NotificationsPage";
-import ProfilePage from "./pages/ProfilePage";
-import EditProfilePage from "./pages/EditProfilePage";
-import AnnouncePage from "./pages/AnnouncePage";
-import NotFoundPage from "./pages/NotFoundPage";
-import HouseRulesPage from "./pages/help/HouseRulesPage";
-import FaqPage from "./pages/help/FaqPage";
-import PrivacyPage from "./pages/help/PrivacyPage";
-import ReportingGuidePage from "./pages/help/ReportingGuidePage";
-import ContactFeedbackPage from "./pages/help/ContactFeedbackPage";
-import AboutPage from "./pages/help/AboutPage";
-import CommunityGuidelinesPage from "./pages/help/CommunityGuidelinesPage";
-import HelpSupportPage from "./pages/help/HelpSupportPage";
 import appLogo from "./assets/logo.png";
 import * as notifApi from "./api/notifications";
+
+// Lazy-loaded pages with route-level code splitting for rapid initial load
+const HomePage = lazy(() => import("./pages/HomePage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const RegisterPage = lazy(() => import("./pages/RegisterPage"));
+const RantDetailsPage = lazy(() => import("./pages/RantDetailsPage"));
+const TrendingPage = lazy(() => import("./pages/TrendingPage"));
+const SearchPage = lazy(() => import("./pages/SearchPage"));
+const MyRantsPage = lazy(() => import("./pages/MyRantsPage"));
+const MyReactionsPage = lazy(() => import("./pages/MyReactionsPage"));
+const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const EditProfilePage = lazy(() => import("./pages/EditProfilePage"));
+const AnnouncePage = lazy(() => import("./pages/AnnouncePage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const HouseRulesPage = lazy(() => import("./pages/help/HouseRulesPage"));
+const FaqPage = lazy(() => import("./pages/help/FaqPage"));
+const PrivacyPage = lazy(() => import("./pages/help/PrivacyPage"));
+const ReportingGuidePage = lazy(() => import("./pages/help/ReportingGuidePage"));
+const ContactFeedbackPage = lazy(() => import("./pages/help/ContactFeedbackPage"));
+const AboutPage = lazy(() => import("./pages/help/AboutPage"));
+const CommunityGuidelinesPage = lazy(() => import("./pages/help/CommunityGuidelinesPage"));
+const HelpSupportPage = lazy(() => import("./pages/help/HelpSupportPage"));
+
+// Sleek fallback component during page transitions
+const PageLoader = () => (
+  <div className="w-full min-h-[50vh] flex flex-col items-center justify-center gap-3">
+    <div className="w-12 h-12 rounded-2xl bg-white border border-[var(--border-color)] flex items-center justify-center shadow-xs animate-pulse">
+      <img src={appLogo} alt="Loading" className="w-7 h-7 object-contain" />
+    </div>
+    <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+      <Loader2 className="w-3.5 h-3.5 animate-spin text-[var(--color-primary)]" />
+      <span>Loading page...</span>
+    </div>
+  </div>
+);
 
 // Helper to scroll to top on route transition
 const ScrollToTop = ({ scrollContainerRef }) => {
@@ -197,7 +212,8 @@ const AppContent = () => {
                 : "min-h-full"
             }`}
           >
-            <Routes>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
               {/* Public Auth Pages */}
               <Route
                 path="/login"
@@ -396,6 +412,7 @@ const AppContent = () => {
                 }
               />
             </Routes>
+          </Suspense>
           </div>
         </div>
 
