@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { ShieldCheck, Sparkles, GraduationCap, ArrowRight } from "lucide-react";
+import { ShieldCheck, Sparkles, GraduationCap, ArrowRight, Loader2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { supabase } from "../config/supabase";
@@ -17,15 +17,21 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const isProcessingRef = useRef(false);
 
-  const from = location.state?.from?.pathname || "/";
+  const rawFrom = location.state?.from?.pathname;
+  const destination = rawFrom && rawFrom !== "/login" && rawFrom !== "/register" ? rawFrom : "/";
 
   // Listen for Supabase redirect callback after Google sign-in
   useEffect(() => {
     let isMounted = true;
 
     const processSession = async (session) => {
-      if (!session?.user) return;
+      if (!session?.user || isProcessingRef.current) return;
+      isProcessingRef.current = true;
+      if (isMounted) setIsProcessing(true);
+
       try {
         const res = await loginWithSupabase({
           accessToken: session.access_token,
@@ -45,15 +51,28 @@ const LoginPage = () => {
 
         if (!isMounted) return;
 
+        // Clean access_token hash from browser URL bar
+        if (window.location.hash) {
+          window.history.replaceState(null, "", window.location.pathname);
+        }
+
         if (res.needsOnboarding) {
           setLoggedInUser(res.data);
           setShowOnboarding(true);
         } else {
           showToast("Welcome back to MAKAU-TEA!", "success");
-          navigate(from, { replace: true });
+          navigate(destination, { replace: true });
         }
       } catch (err) {
-        if (isMounted) setError(err.message || "Failed to complete authentication");
+        isProcessingRef.current = false;
+        if (isMounted) {
+          setError(
+            err.message ||
+              "Failed to connect to backend server. Please verify your internet or backend URL."
+          );
+        }
+      } finally {
+        if (isMounted) setIsProcessing(false);
       }
     };
 
@@ -79,7 +98,7 @@ const LoginPage = () => {
       isMounted = false;
       subscription?.unsubscribe();
     };
-  }, [from, loginWithSupabase, navigate, showToast]);
+  }, [destination, loginWithSupabase, navigate, showToast]);
 
   const handleGoogleSuccess = async (payload) => {
     setError("");
@@ -146,6 +165,13 @@ const LoginPage = () => {
         <p className="text-xs text-slate-500 mb-6">
           Sign in with your Google account to read, react, and share campus stories.
         </p>
+
+        {isProcessing && (
+          <div className="mb-5 p-3.5 rounded-2xl bg-purple-50 border border-purple-200 text-purple-900 text-xs font-medium flex items-center gap-2.5 animate-pulse">
+            <Loader2 className="w-4 h-4 animate-spin text-[var(--color-primary)] shrink-0" />
+            <span>Completing Google sign-in... Welcome to MAKAU-TEA!</span>
+          </div>
+        )}
 
         {error && (
           <div className="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium leading-relaxed">
