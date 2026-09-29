@@ -41,7 +41,7 @@ export const REPORT_REASONS = [
 
 export const REACTIONS = [
   { emoji: "❤️", name: "love", label: "Love" },
-  { emoji: "💩", name: "poop", label: "Crap" },
+  { emoji: "👎", name: "dislike", label: "Dislike" },
   { emoji: "💀", name: "dead", label: "Dead" },
 ];
 

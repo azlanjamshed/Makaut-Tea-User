@@ -19,13 +19,13 @@ const ReactionBar = ({
 
   const reactionColorClasses = {
     "❤️": "hover:bg-rose-50 text-rose-700 border-rose-200/80 hover:border-rose-300",
-    "💩": "hover:bg-amber-50 text-amber-800 border-amber-200/80 hover:border-amber-300",
+    "👎": "hover:bg-amber-50 text-amber-800 border-amber-200/80 hover:border-amber-300",
     "💀": "hover:bg-purple-50 text-purple-700 border-purple-200/80 hover:border-purple-300",
   };
 
   const activeReactionClasses = {
     "❤️": "bg-rose-100 text-rose-900 border-rose-300 font-bold shadow-xs",
-    "💩": "bg-amber-100 text-amber-900 border-amber-300 font-bold shadow-xs",
+    "👎": "bg-amber-100 text-amber-900 border-amber-300 font-bold shadow-xs",
     "💀": "bg-purple-100 text-purple-900 border-purple-300 font-bold shadow-xs",
   };
 
