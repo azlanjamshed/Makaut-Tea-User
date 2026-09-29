@@ -46,7 +46,11 @@ export const REACTIONS = [
 ];
 
 // Single URL configuration for seamless deployment
-const rawApiUrl = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
+const DEFAULT_PROD_API_URL = "https://makaut-tea-server.onrender.com/api";
+const rawApiUrl =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.DEV ? "http://localhost:5001/api" : DEFAULT_PROD_API_URL);
+
 const cleanUrl = rawApiUrl.replace(/\/+$/, "");
 export const API_BASE_URL = cleanUrl.endsWith("/api")
   ? cleanUrl
