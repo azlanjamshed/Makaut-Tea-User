@@ -13,6 +13,7 @@ import DesktopSidebar from "./components/navigation/DesktopSidebar";
 import DesktopTrendingWidget from "./components/navigation/DesktopTrendingWidget";
 import MobileBottomNav from "./components/navigation/MobileBottomNav";
 import CreateRantSheet from "./components/rants/CreateRantSheet";
+import OnboardingModal from "./components/auth/OnboardingModal";
 import appLogo from "./assets/logo.png";
 import * as notifApi from "./api/notifications";
 
@@ -115,7 +116,7 @@ const PublicAuthRoute = ({ children }) => {
 };
 
 const AppContent = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading, submitOnboarding } = useAuth();
   const { showToast } = useToast();
   const location = useLocation();
   const mainContentRef = useRef(null);
@@ -443,6 +444,17 @@ const AppContent = () => {
         />
       )}
 
+      {/* Profile Onboarding Modal fallback if logged-in user hasn't selected department */}
+      {isAuthenticated && user && !user.department && (
+        <OnboardingModal
+          isOpen={true}
+          user={user}
+          onComplete={async (onboardingData) => {
+            await submitOnboarding(onboardingData);
+            showToast("Profile set up! Welcome to MAKAU-TEA", "success");
+          }}
+        />
+      )}
     </div>
   );
 };

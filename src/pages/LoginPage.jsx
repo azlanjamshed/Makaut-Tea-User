@@ -5,15 +5,18 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { supabase } from "../config/supabase";
 import GoogleSignInButton from "../components/auth/GoogleSignInButton";
+import OnboardingModal from "../components/auth/OnboardingModal";
 import appLogo from "../assets/logo.png";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { loginWithGoogle, loginWithSupabase } = useAuth();
+  const { loginWithGoogle, loginWithSupabase, submitOnboarding } = useAuth();
   const { showToast } = useToast();
 
   const [error, setError] = useState("");
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const isProcessingRef = useRef(false);
 
@@ -24,19 +27,13 @@ const LoginPage = () => {
   useEffect(() => {
     let isMounted = true;
 
-    // Only process redirect if URL contains OAuth credentials
-    const hasOAuthParams =
-      window.location.hash.includes("access_token") ||
-      window.location.hash.includes("error") ||
-      new URLSearchParams(window.location.search).has("code");
-
     const processSession = async (session) => {
       if (!session?.user || isProcessingRef.current) return;
       isProcessingRef.current = true;
       if (isMounted) setIsProcessing(true);
 
       try {
-        await loginWithSupabase({
+        const res = await loginWithSupabase({
           accessToken: session.access_token,
           user: {
             id: session.user.id,
@@ -59,8 +56,13 @@ const LoginPage = () => {
           window.history.replaceState(null, "", window.location.pathname);
         }
 
-        showToast("Welcome back to MAKAU-TEA!", "success");
-        navigate(destination, { replace: true });
+        if (res.needsOnboarding) {
+          setLoggedInUser(res.data);
+          setShowOnboarding(true);
+        } else {
+          showToast("Welcome back to MAKAU-TEA!", "success");
+          navigate(destination, { replace: true });
+        }
       } catch (err) {
         isProcessingRef.current = false;
         if (isMounted) {
@@ -74,18 +76,20 @@ const LoginPage = () => {
       }
     };
 
-    if (hasOAuthParams) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user && isMounted) {
-          processSession(session);
-        }
-      });
-    }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user && isMounted) {
+        processSession(session);
+      }
+    });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session?.user && isMounted) {
+      if (
+        (event === "SIGNED_IN" || event === "USER_UPDATED") &&
+        session?.user &&
+        isMounted
+      ) {
         processSession(session);
       }
     });
@@ -99,11 +103,27 @@ const LoginPage = () => {
   const handleGoogleSuccess = async (payload) => {
     setError("");
     try {
-      await loginWithGoogle(payload);
-      showToast("Welcome back to MAKAU-TEA!", "success");
-      navigate(destination, { replace: true });
+      const res = await loginWithGoogle(payload);
+      if (res.needsOnboarding) {
+        setLoggedInUser(res.data);
+        setShowOnboarding(true);
+      } else {
+        showToast("Welcome back to MAKAU-TEA!", "success");
+        navigate(from, { replace: true });
+      }
     } catch (err) {
       setError(err.message || "Failed to sign in with Google");
+    }
+  };
+
+  const handleOnboardingComplete = async (onboardingData) => {
+    try {
+      await submitOnboarding(onboardingData);
+      showToast("Profile set up! Welcome to MAKAU-TEA", "success");
+      setShowOnboarding(false);
+      navigate(from, { replace: true });
+    } catch (err) {
+      throw err;
     }
   };
 
@@ -198,6 +218,13 @@ const LoginPage = () => {
           </p>
         </div>
       </div>
+
+      {/* Onboarding Modal for first-time Google sign-ins */}
+      <OnboardingModal
+        isOpen={showOnboarding}
+        user={loggedInUser}
+        onComplete={handleOnboardingComplete}
+      />
     </div>
   );
 };
