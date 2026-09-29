@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ShieldCheck, Sparkles, GraduationCap, ArrowRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { supabase } from "../config/supabase";
 import GoogleSignInButton from "../components/auth/GoogleSignInButton";
 import OnboardingModal from "../components/auth/OnboardingModal";
 import appLogo from "../assets/logo.png";
@@ -10,7 +11,7 @@ import appLogo from "../assets/logo.png";
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { loginWithGoogle, submitOnboarding } = useAuth();
+  const { loginWithGoogle, loginWithSupabase, submitOnboarding } = useAuth();
   const { showToast } = useToast();
 
   const [error, setError] = useState("");
@@ -18,6 +19,67 @@ const LoginPage = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
 
   const from = location.state?.from?.pathname || "/";
+
+  // Listen for Supabase redirect callback after Google sign-in
+  useEffect(() => {
+    let isMounted = true;
+
+    const processSession = async (session) => {
+      if (!session?.user) return;
+      try {
+        const res = await loginWithSupabase({
+          accessToken: session.access_token,
+          user: {
+            id: session.user.id,
+            email: session.user.email,
+            name:
+              session.user.user_metadata?.full_name ||
+              session.user.user_metadata?.name ||
+              session.user.email?.split("@")[0],
+            avatar:
+              session.user.user_metadata?.avatar_url ||
+              session.user.user_metadata?.picture ||
+              "",
+          },
+        });
+
+        if (!isMounted) return;
+
+        if (res.needsOnboarding) {
+          setLoggedInUser(res.data);
+          setShowOnboarding(true);
+        } else {
+          showToast("Welcome back to MAKAU-TEA!", "success");
+          navigate(from, { replace: true });
+        }
+      } catch (err) {
+        if (isMounted) setError(err.message || "Failed to complete authentication");
+      }
+    };
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user && isMounted) {
+        processSession(session);
+      }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (
+        (event === "SIGNED_IN" || event === "USER_UPDATED") &&
+        session?.user &&
+        isMounted
+      ) {
+        processSession(session);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription?.unsubscribe();
+    };
+  }, [from, loginWithSupabase, navigate, showToast]);
 
   const handleGoogleSuccess = async (payload) => {
     setError("");

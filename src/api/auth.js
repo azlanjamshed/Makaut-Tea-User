@@ -22,6 +22,10 @@ export const googleLogin = async ({ credential, clientId, devUser } = {}) => {
   return api.post('/auth/google', { credential, clientId, devUser });
 };
 
+export const supabaseLogin = async ({ accessToken, user } = {}) => {
+  return api.post('/auth/supabase', { accessToken, user });
+};
+
 export const completeOnboarding = async ({ department, semester, bio } = {}) => {
   return api.put('/auth/onboarding', { department, semester, bio });
 };

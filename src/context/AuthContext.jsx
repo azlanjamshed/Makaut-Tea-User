@@ -101,6 +101,15 @@ export const AuthProvider = ({ children }) => {
     throw new Error(res.message || 'Google authentication failed');
   };
 
+  const loginWithSupabase = async (payload) => {
+    const res = await authApi.supabaseLogin(payload);
+    if (res.success && res.token && res.data) {
+      saveSession(res.data, res.token);
+      return res;
+    }
+    throw new Error(res.message || 'Authentication failed');
+  };
+
   const submitOnboarding = async (onboardingData) => {
     const res = await authApi.completeOnboarding(onboardingData);
     if (res.success && res.data) {
@@ -125,6 +134,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         loginWithGoogle,
+        loginWithSupabase,
         submitOnboarding,
         logout,
         refreshUser,

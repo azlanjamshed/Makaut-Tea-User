@@ -1,10 +1,7 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 import { Loader2, ArrowRight } from "lucide-react";
+import { supabase } from "../../config/supabase";
 import Button from "../common/Button";
-
-// Default client ID fallback so production builds never fail even if hosting env variable is omitted
-const DEFAULT_GOOGLE_CLIENT_ID =
-  "113387745578-39rrp3vibarq7e6m589knqnqp8vcipgq.apps.googleusercontent.com";
 
 const GoogleLogo = () => (
   <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
@@ -32,92 +29,33 @@ const GoogleSignInButton = ({
   onError,
   text = "Continue with Google",
 }) => {
-  const googleBtnContainerRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [gsiLoaded, setGsiLoaded] = useState(false);
   const [showDevModal, setShowDevModal] = useState(false);
   const [devEmail, setDevEmail] = useState("");
   const [devName, setDevName] = useState("");
 
-  const googleClientId =
-    import.meta.env.VITE_GOOGLE_CLIENT_ID || DEFAULT_GOOGLE_CLIENT_ID;
   const isDev = import.meta.env.DEV;
 
-  useEffect(() => {
-    let isMounted = true;
+  const handleSignIn = async () => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/login`,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
+        },
+      });
 
-    const handleGsiCallback = async (response) => {
-      if (!response?.credential) {
-        onError?.(new Error("No credential received from Google"));
-        return;
-      }
-
-      setIsLoading(true);
-      try {
-        await onGoogleSuccess({ credential: response.credential });
-      } catch (err) {
-        onError?.(err);
-      } finally {
-        if (isMounted) setIsLoading(false);
-      }
-    };
-
-    const initializeGsi = () => {
-      if (!window.google?.accounts?.id || !googleClientId) return;
-
-      try {
-        window.google.accounts.id.initialize({
-          client_id: googleClientId,
-          callback: handleGsiCallback,
-          auto_select: false,
-          cancel_on_tap_outside: true,
-        });
-
-        if (googleBtnContainerRef.current) {
-          googleBtnContainerRef.current.innerHTML = "";
-          window.google.accounts.id.renderButton(googleBtnContainerRef.current, {
-            type: "standard",
-            theme: "outline",
-            size: "large",
-            text: text.toLowerCase().includes("sign up")
-              ? "signup_with"
-              : "continue_with",
-            shape: "pill",
-            logo_alignment: "center",
-            width: 340,
-          });
-        }
-
-        if (isMounted) setGsiLoaded(true);
-
-        // Prompt Google One Tap if available in browser
-        window.google.accounts.id.prompt();
-      } catch (err) {
-        console.error("Failed to render Google Sign-In button:", err);
-      }
-    };
-
-    if (window.google?.accounts?.id) {
-      initializeGsi();
-    } else {
-      const existingScript = document.getElementById("google-gsi-client");
-      if (existingScript) {
-        existingScript.addEventListener("load", initializeGsi);
-      } else {
-        const script = document.createElement("script");
-        script.id = "google-gsi-client";
-        script.src = "https://accounts.google.com/gsi/client";
-        script.async = true;
-        script.defer = true;
-        script.onload = initializeGsi;
-        document.body.appendChild(script);
-      }
+      if (error) throw error;
+    } catch (err) {
+      setIsLoading(false);
+      onError?.(err);
     }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [googleClientId, text, onError, onGoogleSuccess]);
+  };
 
   const handleDevSubmit = async (e) => {
     e.preventDefault();
@@ -158,30 +96,23 @@ const GoogleSignInButton = ({
 
   return (
     <div className="w-full flex flex-col items-center justify-center">
-      {isLoading && (
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 py-3 animate-pulse">
-          <Loader2 className="w-4 h-4 animate-spin text-[var(--color-primary)]" />
-          <span>Connecting to your Google Account...</span>
-        </div>
-      )}
+      <button
+        type="button"
+        onClick={handleSignIn}
+        disabled={isLoading}
+        className="w-full flex items-center justify-center gap-3 px-5 py-3.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm border-2 border-slate-200 hover:border-slate-300 shadow-xs hover:shadow-sm active:scale-[0.99] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group"
+      >
+        {isLoading ? (
+          <Loader2 className="w-5 h-5 animate-spin text-[var(--color-primary)]" />
+        ) : (
+          <div className="group-hover:scale-105 transition-transform shrink-0">
+            <GoogleLogo />
+          </div>
+        )}
+        <span>{isLoading ? "Connecting to Google..." : text}</span>
+      </button>
 
-      {/* Official Google Identity Services Button Container */}
-      <div
-        ref={googleBtnContainerRef}
-        className={`w-full flex justify-center items-center min-h-[44px] ${
-          isLoading ? "opacity-40 pointer-events-none" : "opacity-100"
-        }`}
-      />
-
-      {/* Fallback button shown only while Google script is downloading over network */}
-      {!gsiLoaded && !isLoading && (
-        <div className="w-full max-w-[340px] flex items-center justify-center gap-3 px-5 py-3 rounded-full bg-white text-slate-700 font-semibold text-sm border-2 border-slate-200 shadow-2xs">
-          <GoogleLogo />
-          <span>{text}</span>
-        </div>
-      )}
-
-      {/* Development-only test accounts modal trigger */}
+      {/* Development-only quick test accounts modal trigger */}
       {isDev && (
         <div className="mt-3 text-center">
           <button
