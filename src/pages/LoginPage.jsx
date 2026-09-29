@@ -27,6 +27,12 @@ const LoginPage = () => {
   useEffect(() => {
     let isMounted = true;
 
+    // Only process redirect if URL contains OAuth credentials
+    const hasOAuthParams =
+      window.location.hash.includes("access_token") ||
+      window.location.hash.includes("error") ||
+      new URLSearchParams(window.location.search).has("code");
+
     const processSession = async (session) => {
       if (!session?.user || isProcessingRef.current) return;
       isProcessingRef.current = true;
@@ -76,17 +82,20 @@ const LoginPage = () => {
       }
     };
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user && isMounted) {
-        processSession(session);
-      }
-    });
+    if (hasOAuthParams) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user && isMounted) {
+          processSession(session);
+        }
+      });
+    }
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (
-        (event === "SIGNED_IN" || event === "USER_UPDATED") &&
+        event === "SIGNED_IN" &&
+        hasOAuthParams &&
         session?.user &&
         isMounted
       ) {
@@ -109,7 +118,7 @@ const LoginPage = () => {
         setShowOnboarding(true);
       } else {
         showToast("Welcome back to MAKAU-TEA!", "success");
-        navigate(from, { replace: true });
+        navigate(destination, { replace: true });
       }
     } catch (err) {
       setError(err.message || "Failed to sign in with Google");
@@ -121,7 +130,7 @@ const LoginPage = () => {
       await submitOnboarding(onboardingData);
       showToast("Profile set up! Welcome to MAKAU-TEA", "success");
       setShowOnboarding(false);
-      navigate(from, { replace: true });
+      navigate(destination, { replace: true });
     } catch (err) {
       throw err;
     }
