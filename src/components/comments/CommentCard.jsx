@@ -53,7 +53,7 @@ const CommentCard = ({
   );
 
   const authorName = isAdminComment
-    ? (comment.user?.name || 'Head of Rant Affairs 📢')
+    ? (comment.user?.name || 'Head of MAKAU-TEA Affairs 📢')
     : comment.isAnonymous
     ? comment.user?.anonymousUsername || 'Anonymous'
     : comment.user?.name || 'Student';
@@ -283,7 +283,7 @@ const CommentCard = ({
                   reply.user?.role === 'admin'
                 );
                 const replyAuthorName = isReplyAdmin
-                  ? (reply.user?.name || 'Head of Rant Affairs 📢')
+                  ? (reply.user?.name || 'Head of MAKAU-TEA Affairs 📢')
                   : reply.isAnonymous
                   ? reply.user?.anonymousUsername || 'Anonymous'
                   : reply.user?.name || 'Student';

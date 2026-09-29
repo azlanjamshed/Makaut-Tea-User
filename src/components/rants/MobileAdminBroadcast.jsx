@@ -48,7 +48,7 @@ const MobileAdminBroadcast = () => {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-primary)]"></span>
           </span>
           <Megaphone className="w-3.5 h-3.5 text-[var(--color-primary)]" />
-          <span>Head of Rant Affairs 📢</span>
+          <span>Head of MAKAU-TEA Affairs 📢</span>
           <span className="text-[10px] font-normal text-purple-700 bg-purple-50 px-1.5 py-0.2 rounded-full border border-purple-200">
             24h
           </span>

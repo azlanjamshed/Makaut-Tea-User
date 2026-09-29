@@ -56,7 +56,7 @@ const RantCard = ({
   );
 
   const authorName = isOfficial
-    ? rant.user?.name || "Head of Rant Affairs 📢"
+    ? rant.user?.name || "Head of MAKAU-TEA Affairs 📢"
     : rant.isAnonymous
       ? rant.user?.anonymousUsername || rant.user?.name || "Anonymous"
       : rant.user?.name || "Student";

@@ -94,7 +94,7 @@ const DesktopTrendingWidget = () => {
               <div className="flex items-center gap-1.5 truncate pr-2">
                 {hottestPost.isOfficial || hottestPost.isAdminPost || hottestPost.user?.role === 'admin' ? (
                   <span className="font-bold text-[var(--color-primary)] truncate">
-                    Head of Rant Affairs 📢
+                    Head of MAKAU-TEA Affairs 📢
                   </span>
                 ) : (
                   <span className="font-semibold text-slate-900 truncate">
@@ -155,7 +155,7 @@ const DesktopTrendingWidget = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-[var(--color-primary)] font-bold text-xs uppercase tracking-wider font-mono">
             <Megaphone className="w-4 h-4 text-[var(--color-primary)]" />
-            <span>Head of Rant Affairs</span>
+            <span>Head of MAKAU-TEA Affairs</span>
           </div>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/20 font-mono flex items-center gap-1">
             <Clock className="w-2.5 h-2.5" />

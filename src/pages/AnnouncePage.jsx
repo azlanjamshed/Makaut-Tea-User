@@ -185,7 +185,7 @@ const AnnouncePage = () => {
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
             Need to broadcast a club event, workshop, competition, or urgent
             student advisory to all students? Submit your announcement proposal
-            directly to the <strong>Head of Rant Affairs 📢</strong>. Once
+            directly to the <strong>Head of MAKAU-TEA Affairs 📢</strong>. Once
             approved, it gets published officially to the campus stream.
           </p>
         </div>
