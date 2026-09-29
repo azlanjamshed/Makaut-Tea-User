@@ -83,7 +83,7 @@ const MyReactionsPage = () => {
           <EmptyState
             emoji="❤️"
             title="You haven't reacted to any rants yet"
-            message="Browse the home feed or trending rants and tap 😂 💀 😭 🔥 to save your reactions."
+            message="Browse the home feed or trending rants and tap ❤️ 💩 💀 to save your reactions."
             actionText="Explore Feed"
             onAction={() => navigate('/')}
             className="mt-8"
