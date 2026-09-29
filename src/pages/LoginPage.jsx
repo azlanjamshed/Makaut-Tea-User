@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
-import Input from '../components/common/Input';
-import Button from '../components/common/Button';
-import { useAuth } from '../context/AuthContext';
-import { useToast } from '../context/ToastContext';
-import appLogo from '../assets/logo.png';
+import React, { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Mail, Lock, ArrowRight } from "lucide-react";
+import Input from "../components/common/Input";
+import Button from "../components/common/Button";
+import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
+import appLogo from "../assets/logo.png";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -13,29 +13,29 @@ const LoginPage = () => {
   const { login } = useAuth();
   const { showToast } = useToast();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const from = location.state?.from?.pathname || '/';
+  const from = location.state?.from?.pathname || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!email.trim() || !password) {
-      setError('Please provide your email and password');
+      setError("Please provide your email and password");
       return;
     }
 
     setIsLoading(true);
     try {
       await login({ email: email.trim(), password });
-      showToast('Welcome back to MAKAU-TEA! ☕️', 'success');
+      showToast("Welcome back to MAKAU-TEA! ☕️", "success");
       navigate(from, { replace: true });
     } catch (err) {
-      setError(err.message || 'Invalid email or password');
+      setError(err.message || "Invalid email or password");
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +47,11 @@ const LoginPage = () => {
       <div className="flex flex-col items-center text-center mb-8">
         <Link to="/" className="inline-block group mb-3">
           <div className="w-20 h-20 rounded-3xl overflow-hidden flex items-center justify-center border-2 border-[var(--border-color)] group-hover:scale-105 transition-transform bg-white shadow-md">
-            <img src={appLogo} alt="MAKAU-TEA" className="w-full h-full object-cover" />
+            <img
+              src={appLogo}
+              alt="MAKAU-TEA"
+              className="w-full h-full object-cover"
+            />
           </div>
         </Link>
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 font-display">
@@ -92,7 +96,7 @@ const LoginPage = () => {
             <Input
               label="Password"
               isPassword
-              placeholder="••••••••"
+              placeholder="enter your password"
               icon={Lock}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -102,7 +106,12 @@ const LoginPage = () => {
             <div className="flex justify-end pt-1">
               <button
                 type="button"
-                onClick={() => showToast('Password reset: Contact admin or check campus guidelines', 'info')}
+                onClick={() =>
+                  showToast(
+                    "Password reset: Contact admin or check campus guidelines",
+                    "info",
+                  )
+                }
                 className="text-xs text-slate-500 hover:text-[var(--color-primary)] transition-colors"
               >
                 Forgot password?
@@ -124,7 +133,7 @@ const LoginPage = () => {
 
         <div className="mt-6 pt-5 border-t border-[var(--border-color)] text-center">
           <p className="text-xs text-slate-500">
-            Don't have an account?{' '}
+            Don't have an account?{" "}
             <Link
               to="/register"
               className="text-[var(--color-primary)] font-bold hover:underline inline-flex items-center gap-1"

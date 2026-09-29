@@ -1,37 +1,46 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { Home, Flame, Plus, Bell, User, HelpCircle, Megaphone } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { scrollToTopAndRefreshFeed } from '../../utils/helpers';
+import React from "react";
+import { NavLink } from "react-router-dom";
+import {
+  Home,
+  Flame,
+  Plus,
+  Bell,
+  User,
+  HelpCircle,
+  Megaphone,
+} from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { scrollToTopAndRefreshFeed } from "../../utils/helpers";
 
 const MobileBottomNav = ({ onOpenCreate, unreadCount = 0 }) => {
   const { isAuthenticated } = useAuth();
 
   const navItems = [
-    { to: '/', label: 'Home', icon: Home, end: true },
-    { to: '/trending', label: 'Trending', icon: Flame },
-    { to: '/announce', label: 'Broadcast', icon: Megaphone },
+    { to: "/", label: "Home", icon: Home, end: true },
+    { to: "/trending", label: "Trending", icon: Flame },
     {
       isAction: true,
-      label: 'Post',
+      label: "Post",
       icon: Plus,
       onClick: onOpenCreate,
     },
+    { to: "/announce", label: "Broadcast", icon: Megaphone },
+
+    // {
+    //   to: '/help',
+    //   label: 'Help',
+    //   icon: HelpCircle,
+    // },
+    // {
+    //   to: '/notifications',
+    //   label: 'Alerts',
+    //   icon: Bell,
+    //   badge: unreadCount,
+    //   requiresAuth: true,
+    // },
     {
-      to: '/help',
-      label: 'Help',
-      icon: HelpCircle,
-    },
-    {
-      to: '/notifications',
-      label: 'Alerts',
-      icon: Bell,
-      badge: unreadCount,
-      requiresAuth: true,
-    },
-    {
-      to: isAuthenticated ? '/profile' : '/login',
-      label: 'Profile',
+      to: isAuthenticated ? "/profile" : "/login",
+      label: "Profile",
       icon: User,
     },
   ];
@@ -60,20 +69,24 @@ const MobileBottomNav = ({ onOpenCreate, unreadCount = 0 }) => {
               key={item.to}
               to={item.to}
               end={item.end}
-              onClick={item.to === '/' ? scrollToTopAndRefreshFeed : undefined}
+              onClick={item.to === "/" ? scrollToTopAndRefreshFeed : undefined}
               className={({ isActive }) =>
                 `relative flex flex-col items-center justify-center flex-1 min-w-0 max-w-[54px] h-full py-1 text-[9px] sm:text-[10px] font-medium transition-colors ${
-                  isActive ? 'text-[var(--color-primary)] font-bold' : 'text-slate-500 hover:text-slate-900'
+                  isActive
+                    ? "text-[var(--color-primary)] font-bold"
+                    : "text-slate-500 hover:text-slate-900"
                 }`
               }
             >
               {({ isActive }) => (
                 <>
                   <div className="relative">
-                    <Icon className={`w-[18px] h-[18px] sm:w-5 sm:h-5 transition-transform ${isActive ? 'scale-110' : ''}`} />
+                    <Icon
+                      className={`w-[18px] h-[18px] sm:w-5 sm:h-5 transition-transform ${isActive ? "scale-110" : ""}`}
+                    />
                     {item.badge > 0 && (
                       <span className="absolute -top-1.5 -right-2 bg-rose-500 text-white font-bold text-[9px] min-w-4 h-4 rounded-full flex items-center justify-center px-1 ring-2 ring-white animate-pulse">
-                        {item.badge > 99 ? '99+' : item.badge}
+                        {item.badge > 99 ? "99+" : item.badge}
                       </span>
                     )}
                   </div>
