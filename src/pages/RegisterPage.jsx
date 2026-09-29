@@ -10,42 +10,23 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import GoogleSignInButton from "../components/auth/GoogleSignInButton";
-import OnboardingModal from "../components/auth/OnboardingModal";
 import appLogo from "../assets/logo.png";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const { loginWithGoogle, submitOnboarding } = useAuth();
+  const { loginWithGoogle } = useAuth();
   const { showToast } = useToast();
 
   const [error, setError] = useState("");
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const [registeredUser, setRegisteredUser] = useState(null);
 
   const handleGoogleSuccess = async (payload) => {
     setError("");
     try {
-      const res = await loginWithGoogle(payload);
-      if (res.needsOnboarding) {
-        setRegisteredUser(res.data);
-        setShowOnboarding(true);
-      } else {
-        showToast("Welcome to MAKAU-TEA!", "success");
-        navigate("/", { replace: true });
-      }
-    } catch (err) {
-      setError(err.message || "Failed to create account with Google");
-    }
-  };
-
-  const handleOnboardingComplete = async (onboardingData) => {
-    try {
-      await submitOnboarding(onboardingData);
-      showToast("Account ready! Welcome to MAKAU-TEA", "success");
-      setShowOnboarding(false);
+      await loginWithGoogle(payload);
+      showToast("Welcome to MAKAU-TEA!", "success");
       navigate("/", { replace: true });
     } catch (err) {
-      throw err;
+      setError(err.message || "Failed to create account with Google");
     }
   };
 
@@ -142,13 +123,6 @@ const RegisterPage = () => {
           </p>
         </div>
       </div>
-
-      {/* Onboarding Modal for first-time Google sign-ins */}
-      <OnboardingModal
-        isOpen={showOnboarding}
-        user={registeredUser}
-        onComplete={handleOnboardingComplete}
-      />
     </div>
   );
 };

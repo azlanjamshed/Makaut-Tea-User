@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import * as authApi from '../api/auth';
+import { supabase } from '../config/supabase';
 
 const AuthContext = createContext(null);
 
@@ -32,8 +33,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     saveSession(null, null);
+    try {
+      await supabase.auth.signOut({ scope: 'local' });
+    } catch (e) {
+      console.warn('Supabase signOut error:', e);
+    }
+    // Also remove any lingering supabase cached session keys
+    try {
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('sb-')) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (_) {}
     authApi.logout().catch(() => {});
   }, []);
 
