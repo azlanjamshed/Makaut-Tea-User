@@ -1,6 +1,6 @@
 import React from 'react';
 import MobileHeader from '../../components/navigation/MobileHeader';
-import { Info, Sparkles, Heart, Coffee, ShieldCheck, Flame } from 'lucide-react';
+import { Info, Sparkles, Heart, Coffee, ShieldCheck, Flame, Scroll, MessageSquare, Check, X } from 'lucide-react';
 import appLogo from '../../assets/logo.png';
 import { Link } from 'react-router-dom';
 
@@ -43,13 +43,13 @@ const AboutPage = () => {
 
             <div className="p-4 rounded-2xl bg-slate-50 border border-[var(--border-color)] space-y-2 font-medium text-slate-700">
               <p className="flex items-center gap-2 text-rose-600">
-                <span className="font-bold">✕</span> No polished, performative LinkedIn posts.
+                <X className="w-4 h-4 shrink-0 font-bold" /> No polished, performative LinkedIn posts.
               </p>
               <p className="flex items-center gap-2 text-rose-600">
-                <span className="font-bold">✕</span> No pretending everything is perfect.
+                <X className="w-4 h-4 shrink-0 font-bold" /> No pretending everything is perfect.
               </p>
               <p className="flex items-center gap-2 text-emerald-600 font-bold">
-                <span className="font-bold">✓</span> Just real college life.
+                <Check className="w-4 h-4 shrink-0 font-bold" /> Just real college life.
               </p>
             </div>
 
@@ -71,9 +71,9 @@ const AboutPage = () => {
         <div className="grid grid-cols-2 gap-3">
           <Link
             to="/rules"
-            className="p-4 rounded-2xl bg-white border border-[var(--border-color)] hover:border-[var(--color-primary)] transition-colors text-center space-y-1 group shadow-xs"
+            className="p-4 rounded-2xl bg-white border border-[var(--border-color)] hover:border-[var(--color-primary)] transition-colors text-center space-y-1.5 group shadow-xs"
           >
-            <span className="text-xl">📜</span>
+            <Scroll className="w-5 h-5 mx-auto text-[var(--color-primary)]" />
             <span className="text-xs font-bold text-slate-800 block group-hover:text-[var(--color-primary)]">
               House Rules
             </span>
@@ -81,9 +81,9 @@ const AboutPage = () => {
 
           <Link
             to="/feedback"
-            className="p-4 rounded-2xl bg-white border border-[var(--border-color)] hover:border-[var(--color-primary)] transition-colors text-center space-y-1 group shadow-xs"
+            className="p-4 rounded-2xl bg-white border border-[var(--border-color)] hover:border-[var(--color-primary)] transition-colors text-center space-y-1.5 group shadow-xs"
           >
-            <span className="text-xl">💬</span>
+            <MessageSquare className="w-5 h-5 mx-auto text-[var(--color-primary)]" />
             <span className="text-xs font-bold text-slate-800 block group-hover:text-[var(--color-primary)]">
               Share Feedback
             </span>

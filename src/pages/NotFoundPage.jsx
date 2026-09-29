@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../components/common/Button';
-import { Home } from 'lucide-react';
+import { Home, Compass } from 'lucide-react';
 
 const NotFoundPage = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center text-center px-4 py-12 max-w-md mx-auto">
-      <span className="text-6xl mb-4 select-none">🏚️</span>
+      <div className="w-20 h-20 rounded-3xl bg-purple-50 border border-[var(--border-color)] flex items-center justify-center text-[var(--color-primary)] mb-6 shadow-sm">
+        <Compass className="w-10 h-10 stroke-[1.5]" />
+      </div>
       <h1 className="text-4xl font-extrabold text-white font-display mb-2">
         404
       </h1>

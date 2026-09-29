@@ -83,7 +83,7 @@ const RegisterPage = () => {
 
     try {
       await register(formData);
-      showToast('Account created! Welcome to MAKAU-TEA 🎉', 'success');
+      showToast('Account created! Welcome to MAKAU-TEA', 'success');
       navigate('/', { replace: true });
     } catch (err) {
       setError(err.message || 'Registration failed');

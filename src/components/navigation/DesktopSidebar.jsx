@@ -134,8 +134,8 @@ const DesktopSidebar = ({ onOpenCreate, unreadCount = 0 }) => {
           className="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-white/80 hover:text-white bg-white/10 hover:bg-white/15 border border-white/15 transition-all group"
         >
           <div className="flex items-center gap-2.5">
-            <span className="text-base group-hover:scale-110 transition-transform">
-              🆘
+            <span className="p-1 rounded-lg bg-white/10 group-hover:scale-110 transition-transform flex items-center justify-center">
+              <HelpCircle className="w-4 h-4 text-white" />
             </span>
             <span className="font-display">Help & Support</span>
           </div>

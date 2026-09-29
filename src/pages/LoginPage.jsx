@@ -32,7 +32,7 @@ const LoginPage = () => {
     setIsLoading(true);
     try {
       await login({ email: email.trim(), password });
-      showToast("Welcome back to MAKAU-TEA! ☕️", "success");
+      showToast("Welcome back to MAKAU-TEA!", "success");
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || "Invalid email or password");

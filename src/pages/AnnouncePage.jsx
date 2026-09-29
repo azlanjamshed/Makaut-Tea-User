@@ -26,12 +26,12 @@ import { timeAgo, resolveImageUrl } from "../utils/helpers";
 import * as announcementsApi from "../api/announcements";
 
 const CATEGORIES = [
-  { id: "event", label: "🎪 Event / Workshop / Hackathon" },
-  { id: "academic", label: "📚 Academic & Exam Notice" },
-  { id: "club", label: "🎭 Cultural & Club Activity" },
-  { id: "urgent", label: "🚨 Urgent Campus Advisory" },
-  { id: "lost_found", label: "🔍 Lost & Found Notice" },
-  { id: "general", label: "📢 General Campus Update" },
+  { id: "event", label: "Event / Workshop / Hackathon" },
+  { id: "academic", label: "Academic & Exam Notice" },
+  { id: "club", label: "Cultural & Club Activity" },
+  { id: "urgent", label: "Urgent Campus Advisory" },
+  { id: "lost_found", label: "Lost & Found Notice" },
+  { id: "general", label: "General Campus Update" },
 ];
 
 const AnnouncePage = () => {
@@ -134,7 +134,7 @@ const AnnouncePage = () => {
 
       const res = await announcementsApi.createAnnouncementRequest(formData);
       if (res.success) {
-        showToast("Announcement request submitted to Admin! 📢", "success");
+        showToast("Announcement request submitted to Admin!", "success");
         setTitle("");
         setText("");
         setCategory("event");
@@ -185,7 +185,7 @@ const AnnouncePage = () => {
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
             Need to broadcast a club event, workshop, competition, or urgent
             student advisory to all students? Submit your announcement proposal
-            directly to the <strong>Head of MAKAU-TEA Affairs 📢</strong>. Once
+            directly to the <strong>Head of MAKAU-TEA Affairs</strong>. Once
             approved, it gets published officially to the campus stream.
           </p>
         </div>

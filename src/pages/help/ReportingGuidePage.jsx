@@ -1,6 +1,6 @@
 import React from 'react';
 import MobileHeader from '../../components/navigation/MobileHeader';
-import { AlertTriangle, CheckCircle2, XCircle, ArrowDown, ShieldCheck, Flag, EyeOff, Ban } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, XCircle, ArrowDown, ShieldCheck, Flag, EyeOff, Ban, Check, X } from 'lucide-react';
 
 const ReportingGuidePage = () => {
   return (
@@ -11,8 +11,8 @@ const ReportingGuidePage = () => {
         {/* Hero Section */}
         <div className="rounded-3xl bg-white border border-[var(--border-color)] p-6 space-y-3 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-2xl shrink-0">
-              🚨
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-6 h-6 text-rose-600" />
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 font-display">
@@ -40,27 +40,27 @@ const ReportingGuidePage = () => {
 
             <ul className="space-y-2 text-xs sm:text-sm text-slate-700 pl-1">
               <li className="flex items-start gap-2">
-                <span className="text-emerald-600 font-bold">✓</span>
+                <Check className="w-3.5 h-3.5 text-emerald-600 font-bold shrink-0 mt-0.5" />
                 <span><strong>Targeted Harassment</strong> or persistent bullying</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-600 font-bold">✓</span>
+                <Check className="w-3.5 h-3.5 text-emerald-600 font-bold shrink-0 mt-0.5" />
                 <span><strong>Spam</strong>, referral codes, or automated flood</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-600 font-bold">✓</span>
+                <Check className="w-3.5 h-3.5 text-emerald-600 font-bold shrink-0 mt-0.5" />
                 <span><strong>Personal info (Doxxing)</strong>, phone numbers, addresses</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-600 font-bold">✓</span>
+                <Check className="w-3.5 h-3.5 text-emerald-600 font-bold shrink-0 mt-0.5" />
                 <span><strong>Violent threats</strong> or self-harm content</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-600 font-bold">✓</span>
+                <Check className="w-3.5 h-3.5 text-emerald-600 font-bold shrink-0 mt-0.5" />
                 <span><strong>NSFW / Explicit</strong> unconsented media</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-600 font-bold">✓</span>
+                <Check className="w-3.5 h-3.5 text-emerald-600 font-bold shrink-0 mt-0.5" />
                 <span>Other severe House Rule violations</span>
               </li>
             </ul>
@@ -75,23 +75,23 @@ const ReportingGuidePage = () => {
 
             <ul className="space-y-2 text-xs sm:text-sm text-slate-700 pl-1">
               <li className="flex items-start gap-2">
-                <span className="text-rose-600 font-bold">✕</span>
+                <X className="w-3.5 h-3.5 text-rose-600 font-bold shrink-0 mt-0.5" />
                 <span><em>"I disagree with this opinion."</em></span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-rose-600 font-bold">✕</span>
+                <X className="w-3.5 h-3.5 text-rose-600 font-bold shrink-0 mt-0.5" />
                 <span><em>"This person likes a different professor or club."</em></span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-rose-600 font-bold">✕</span>
+                <X className="w-3.5 h-3.5 text-rose-600 font-bold shrink-0 mt-0.5" />
                 <span><em>"This rant hurt my feelings, but violates no rules."</em></span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-rose-600 font-bold">✕</span>
+                <X className="w-3.5 h-3.5 text-rose-600 font-bold shrink-0 mt-0.5" />
                 <span><em>"I just don't like the person posting it."</em></span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-rose-600 font-bold">✕</span>
+                <X className="w-3.5 h-3.5 text-rose-600 font-bold shrink-0 mt-0.5" />
                 <span>As a personal dislike or downvote button</span>
               </li>
             </ul>

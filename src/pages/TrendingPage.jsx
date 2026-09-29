@@ -11,7 +11,7 @@ import MobileAdminBroadcast from '../components/rants/MobileAdminBroadcast';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import * as postsApi from '../api/posts';
-import { Flame, Trophy, RefreshCw, Clock, Sparkles } from 'lucide-react';
+import { Flame, Trophy, RefreshCw, Clock, Sparkles, Crown, Medal, Award } from 'lucide-react';
 
 const TrendingPage = ({ onOpenEdit }) => {
   const navigate = useNavigate();
@@ -130,7 +130,7 @@ const TrendingPage = ({ onOpenEdit }) => {
 
   return (
     <div className="min-h-screen pb-24 md:pb-8 max-w-2xl mx-auto w-full">
-      <MobileHeader title="🔥 Trending Rants" />
+      <MobileHeader title="Trending Rants" />
 
       <main className="px-4 py-4 space-y-4">
         {/* Timeframe Tabs & Refresh */}
@@ -214,7 +214,7 @@ const TrendingPage = ({ onOpenEdit }) => {
                 ? 'No rants have gained reactions or comments in the past 24 hours. React to a rant or spill the tea to kickstart the buzz!'
                 : 'No popular rants recorded yet. Be the first to share something memorable!'
             }
-            actionText="Explore Home Feed 🏠"
+            actionText="Explore Home Feed"
             onAction={() => navigate('/')}
             className="mt-6"
           />
@@ -229,7 +229,7 @@ const TrendingPage = ({ onOpenEdit }) => {
                     <div className="flex items-center gap-2">
                       {rank === 1 ? (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 border border-amber-200 text-amber-900 shadow-xs">
-                          <span>👑</span>
+                          <Crown className="w-3.5 h-3.5 text-amber-600" />
                           <span>#1 Campus Buzz</span>
                           <span className="text-[10px] text-amber-700 font-normal hidden sm:inline">
                             · Leader
@@ -237,12 +237,12 @@ const TrendingPage = ({ onOpenEdit }) => {
                         </span>
                       ) : rank === 2 ? (
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 border border-slate-200 text-slate-800">
-                          <span>🥈</span>
+                          <Medal className="w-3.5 h-3.5 text-slate-500" />
                           <span>#2 Trending</span>
                         </span>
                       ) : rank === 3 ? (
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 border border-amber-200 text-amber-800">
-                          <span>🥉</span>
+                          <Award className="w-3.5 h-3.5 text-amber-700" />
                           <span>#3 Trending</span>
                         </span>
                       ) : (
@@ -253,8 +253,9 @@ const TrendingPage = ({ onOpenEdit }) => {
                     </div>
 
                     <div className="text-[11px] text-slate-400 font-mono flex items-center gap-2">
-                      <span className="text-orange-400 font-bold">
-                        🔥 {rant.reactions?.total || 0} reactions
+                      <span className="text-orange-500 font-bold inline-flex items-center gap-1">
+                        <Flame className="w-3.5 h-3.5 text-orange-500" />
+                        <span>{rant.reactions?.total || 0} reactions</span>
                       </span>
                     </div>
                   </div>

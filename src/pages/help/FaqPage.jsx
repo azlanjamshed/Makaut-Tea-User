@@ -89,8 +89,8 @@ const FaqPage = () => {
         {/* Hero Section */}
         <div className="rounded-3xl bg-white border border-[var(--border-color)] p-6 space-y-3 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary-light)] border border-[var(--color-primary)]/20 flex items-center justify-center text-2xl shrink-0">
-              ❓
+            <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary-light)] border border-[var(--color-primary)]/20 flex items-center justify-center shrink-0">
+              <HelpCircle className="w-6 h-6 text-[var(--color-primary)]" />
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 font-display">

@@ -1,6 +1,6 @@
 import React from 'react';
 import MobileHeader from '../../components/navigation/MobileHeader';
-import { ShieldCheck, Eye, EyeOff, Lock, AlertTriangle, UserCheck, ShieldAlert } from 'lucide-react';
+import { ShieldCheck, Eye, EyeOff, Lock, AlertTriangle, UserCheck, ShieldAlert, Shield, VenetianMask, X } from 'lucide-react';
 
 const PrivacyPage = () => {
   return (
@@ -11,8 +11,8 @@ const PrivacyPage = () => {
         {/* Hero Banner */}
         <div className="rounded-3xl bg-white border border-[var(--border-color)] p-6 space-y-3 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary-light)] border border-[var(--color-primary)]/20 flex items-center justify-center text-2xl shrink-0">
-              🛡️
+            <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary-light)] border border-[var(--color-primary)]/20 flex items-center justify-center shrink-0">
+              <Shield className="w-6 h-6 text-[var(--color-primary)]" />
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 font-display">
@@ -108,14 +108,15 @@ const PrivacyPage = () => {
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] font-mono">
                   Anonymous Post
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/20">
-                  🎭 Masked
+                <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/20">
+                  <VenetianMask className="w-3 h-3" />
+                  <span>Masked</span>
                 </span>
               </div>
 
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-sm border border-slate-300">
-                  🎭
+                <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center border border-slate-300">
+                  <VenetianMask className="w-4 h-4 text-purple-700" />
                 </div>
                 <div>
                   <span className="font-bold text-xs text-slate-900 block">Anonymous Student · IT</span>
@@ -143,22 +144,28 @@ const PrivacyPage = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700 pt-1">
             <div className="p-2.5 rounded-xl bg-slate-50 border border-[var(--border-color)] flex items-center gap-2">
-              <span className="text-rose-600 font-bold">✕</span> Passwords or login credentials
+              <X className="w-3.5 h-3.5 text-rose-600 font-bold shrink-0" />
+              <span>Passwords or login credentials</span>
             </div>
             <div className="p-2.5 rounded-xl bg-slate-50 border border-[var(--border-color)] flex items-center gap-2">
-              <span className="text-rose-600 font-bold">✕</span> Personal phone numbers
+              <X className="w-3.5 h-3.5 text-rose-600 font-bold shrink-0" />
+              <span>Personal phone numbers</span>
             </div>
             <div className="p-2.5 rounded-xl bg-slate-50 border border-[var(--border-color)] flex items-center gap-2">
-              <span className="text-rose-600 font-bold">✕</span> Home or hostel room addresses
+              <X className="w-3.5 h-3.5 text-rose-600 font-bold shrink-0" />
+              <span>Home or hostel room addresses</span>
             </div>
             <div className="p-2.5 rounded-xl bg-slate-50 border border-[var(--border-color)] flex items-center gap-2">
-              <span className="text-rose-600 font-bold">✕</span> Private ID cards / registration cards
+              <X className="w-3.5 h-3.5 text-rose-600 font-bold shrink-0" />
+              <span>Private ID cards / registration cards</span>
             </div>
             <div className="p-2.5 rounded-xl bg-slate-50 border border-[var(--border-color)] flex items-center gap-2">
-              <span className="text-rose-600 font-bold">✕</span> Leaked personal chat screenshots
+              <X className="w-3.5 h-3.5 text-rose-600 font-bold shrink-0" />
+              <span>Leaked personal chat screenshots</span>
             </div>
             <div className="p-2.5 rounded-xl bg-slate-50 border border-[var(--border-color)] flex items-center gap-2">
-              <span className="text-rose-600 font-bold">✕</span> Medical or financial records
+              <X className="w-3.5 h-3.5 text-rose-600 font-bold shrink-0" />
+              <span>Medical or financial records</span>
             </div>
           </div>
         </div>

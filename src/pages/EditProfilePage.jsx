@@ -75,7 +75,7 @@ const EditProfilePage = () => {
       const res = await usersApi.updateMyProfile(formData);
       if (res.success && res.data) {
         updateUserState(res.data);
-        showToast('Profile updated successfully! ✨', 'success');
+        showToast('Profile updated successfully!', 'success');
         navigate('/profile');
       }
     } catch (err) {
@@ -103,7 +103,7 @@ const EditProfilePage = () => {
     setIsSavingPassword(true);
     try {
       await authApi.changePassword({ currentPassword, newPassword });
-      showToast('Password changed successfully! 🔐', 'success');
+      showToast('Password changed successfully!', 'success');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmNewPassword('');

@@ -70,8 +70,9 @@ const DesktopTrendingWidget = () => {
             <Flame className="w-4 h-4 fill-amber-500 text-amber-500" />
             <span>Hot Today on Campus</span>
           </div>
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80 font-mono">
-            🔥 #1 Most Liked
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80 font-mono inline-flex items-center gap-1">
+            <Flame className="w-3 h-3 text-amber-600 fill-amber-600" />
+            <span>#1 Most Liked</span>
           </span>
         </div>
 
@@ -94,7 +95,7 @@ const DesktopTrendingWidget = () => {
               <div className="flex items-center gap-1.5 truncate pr-2">
                 {hottestPost.isOfficial || hottestPost.isAdminPost || hottestPost.user?.role === 'admin' ? (
                   <span className="font-bold text-[var(--color-primary)] truncate">
-                    Head of MAKAU-TEA Affairs 📢
+                    Head of MAKAU-TEA Affairs
                   </span>
                 ) : (
                   <span className="font-semibold text-slate-900 truncate">
@@ -132,8 +133,9 @@ const DesktopTrendingWidget = () => {
             {/* Reaction Summary Bar */}
             <div className="mt-3 pt-2.5 border-t border-[var(--border-color)] flex items-center justify-between text-[11px] font-mono">
               <div className="flex items-center gap-2 font-bold">
-                <span className="px-2 py-0.5 rounded-lg bg-amber-100/80 border border-amber-200 text-amber-900">
-                  🔥 {formatCount(hottestPost.reactions?.total || 0)} Likes
+                <span className="px-2 py-0.5 rounded-lg bg-amber-100/80 border border-amber-200 text-amber-900 inline-flex items-center gap-1">
+                  <Flame className="w-3 h-3 text-amber-600 fill-amber-600" />
+                  <span>{formatCount(hottestPost.reactions?.total || 0)} Likes</span>
                 </span>
                 <span className="text-slate-500 text-[10px] font-normal flex items-center gap-1">
                   <MessageSquare className="w-3 h-3 text-slate-400" />
@@ -170,7 +172,7 @@ const DesktopTrendingWidget = () => {
           </div>
         ) : recentOfficialPosts.length === 0 ? (
           <div className="py-3 px-3 text-center text-xs text-slate-500 italic bg-slate-50 rounded-2xl border border-[var(--border-color)]">
-            No official broadcasts in the last 24 hours. Campus affairs are running normally! ✨
+            No official broadcasts in the last 24 hours. Campus affairs are running normally!
           </div>
         ) : (
           <div className="space-y-2.5">
@@ -202,8 +204,14 @@ const DesktopTrendingWidget = () => {
                         <span>Photo</span>
                       </span>
                     )}
-                    <span>🔥 {post.reactions?.total || 0}</span>
-                    <span>💬 {post.commentsCount || 0}</span>
+                    <span className="inline-flex items-center gap-1">
+                      <Flame className="w-3 h-3 text-amber-500" />
+                      {post.reactions?.total || 0}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <MessageSquare className="w-3 h-3 text-slate-400" />
+                      {post.commentsCount || 0}
+                    </span>
                   </div>
                   <span className="text-[var(--color-primary)] text-[10px] group-hover:translate-x-0.5 transition-transform flex items-center font-bold">
                     Notice <ChevronRight className="w-3 h-3 ml-0.5" />

@@ -48,7 +48,7 @@ const MobileAdminBroadcast = () => {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-primary)]"></span>
           </span>
           <Megaphone className="w-3.5 h-3.5 text-[var(--color-primary)]" />
-          <span>Head of MAKAU-TEA Affairs 📢</span>
+          <span>Head of MAKAU-TEA Affairs</span>
           <span className="text-[10px] font-normal text-purple-700 bg-purple-50 px-1.5 py-0.2 rounded-full border border-purple-200">
             24h
           </span>
@@ -122,8 +122,14 @@ const MobileAdminBroadcast = () => {
                       <span>Photo</span>
                     </span>
                   )}
-                  <span>🔥 {formatCount(post.reactions?.total || 0)}</span>
-                  <span>💬 {formatCount(post.commentsCount || 0)}</span>
+                  <span className="inline-flex items-center gap-1">
+                    <Flame className="w-3 h-3 text-amber-500" />
+                    <span>{formatCount(post.reactions?.total || 0)}</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <MessageSquare className="w-3 h-3 text-slate-400" />
+                    <span>{formatCount(post.commentsCount || 0)}</span>
+                  </span>
                 </div>
                 <span className="text-[var(--color-primary)] font-sans text-[11px] font-medium flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
                   Read Notice <ChevronRight className="w-3 h-3" />

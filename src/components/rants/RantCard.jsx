@@ -56,7 +56,7 @@ const RantCard = ({
   );
 
   const authorName = isOfficial
-    ? rant.user?.name || "Head of MAKAU-TEA Affairs 📢"
+    ? rant.user?.name || "Head of MAKAU-TEA Affairs"
     : rant.isAnonymous
       ? rant.user?.anonymousUsername || rant.user?.name || "Anonymous"
       : rant.user?.name || "Student";
@@ -101,7 +101,7 @@ const RantCard = ({
     }
     navigator.clipboard.writeText(postUrl);
     setCopied(true);
-    showToast("Post link copied to clipboard! 📋", "success");
+    showToast("Post link copied to clipboard!", "success");
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -192,9 +192,7 @@ const RantCard = ({
                   <span
                     className={`font-medium truncate max-w-[150px] sm:max-w-xs ${isOfficial ? "text-purple-700" : "text-slate-600"}`}
                   >
-                    {isOfficial
-                      ? `📢 ${rant.semester || rant.department}`
-                      : rant.semester || rant.department}
+                    {rant.semester || rant.department}
                   </span>
                   <span>·</span>
                 </>

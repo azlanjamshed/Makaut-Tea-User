@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MessageSquare, Reply, Flame, Sparkles, Trash2, CheckCircle } from 'lucide-react';
 import Avatar from '../common/Avatar';
+import ReactionIcon from '../common/ReactionIcon';
 import { timeAgo } from '../../utils/helpers';
 
 const NotificationItem = ({
@@ -21,7 +22,7 @@ const NotificationItem = ({
       case 'reply':
         return <Reply className="w-3.5 h-3.5 text-purple-400" />;
       case 'reaction':
-        return <span className="text-xs">{notification.reactionEmoji || '🔥'}</span>;
+        return <ReactionIcon emoji={notification.reactionEmoji || '❤️'} size={14} />;
       case 'trending':
         return <Flame className="w-3.5 h-3.5 text-sky-400 fill-sky-400" />;
       default:

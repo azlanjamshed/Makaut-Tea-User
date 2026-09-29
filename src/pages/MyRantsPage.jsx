@@ -84,7 +84,7 @@ const MyRantsPage = ({ onOpenCreate, onOpenEdit }) => {
             emoji="✍️"
             title="You haven't posted any rants yet"
             message="Got a campus grievance or confession? Spill the tea anonymously or with your profile."
-            actionText="Create Your First Rant 🔥"
+            actionText="Create Your First Rant"
             onAction={onOpenCreate}
             className="mt-8"
           />

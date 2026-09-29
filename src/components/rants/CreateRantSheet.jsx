@@ -3,7 +3,7 @@ import BottomSheet from '../common/BottomSheet';
 import Textarea from '../common/Textarea';
 import Select from '../common/Select';
 import Button from '../common/Button';
-import { Image as ImageIcon, X, Sparkles, Shield, Send } from 'lucide-react';
+import { Image as ImageIcon, X, Sparkles, Shield, Send, VenetianMask } from 'lucide-react';
 import { DEPARTMENTS } from '../../utils/constants';
 import { resolveImageUrl } from '../../utils/helpers';
 import { useAuth } from '../../context/AuthContext';
@@ -102,10 +102,10 @@ const CreateRantSheet = ({
       let result;
       if (editRant) {
         result = await postsApi.updatePost(editRant.id || editRant._id, formData);
-        showToast('Rant updated successfully! ✨', 'success');
+        showToast('Rant updated successfully!', 'success');
       } else {
         result = await postsApi.createPost(formData);
-        showToast('Your rant has been posted! 🔥', 'success');
+        showToast('Your rant has been posted!', 'success');
       }
 
       onSuccess?.(result.data);
@@ -121,7 +121,7 @@ const CreateRantSheet = ({
     <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
-      title={editRant ? 'Edit Rant' : 'Spill The Tea ☕'}
+      title={editRant ? 'Edit Rant' : 'Spill The Tea'}
     >
       <form onSubmit={handleSubmit} className="space-y-4 pt-1">
         {/* Rant Text */}
@@ -177,13 +177,14 @@ const CreateRantSheet = ({
               className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white border border-[var(--border-color)] text-slate-700 hover:text-slate-900 hover:border-slate-400 text-xs font-semibold transition-all active:scale-95 shadow-sm"
             >
               <ImageIcon className="w-4 h-4 text-[var(--color-primary)]" />
-              <span>{imagePreview ? 'Change Photo' : '📷 Add Photo'}</span>
+              <span>{imagePreview ? 'Change Photo' : 'Add Photo'}</span>
             </button>
 
             {/* Anonymous Toggle */}
             <label className="flex items-center gap-2.5 cursor-pointer select-none">
               <span className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
-                <span>🎭 Anonymous</span>
+                <VenetianMask className="w-4 h-4 text-purple-600" />
+                <span>Anonymous</span>
               </span>
               <div className="relative">
                 <input
@@ -214,7 +215,7 @@ const CreateRantSheet = ({
             className="w-full text-base font-bold"
             icon={Send}
           >
-            {editRant ? 'Save Changes' : 'Post Rant 🔥'}
+            {editRant ? 'Save Changes' : 'Post Rant'}
           </Button>
         </div>
       </form>

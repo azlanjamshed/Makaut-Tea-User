@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send } from 'lucide-react';
+import { Send, VenetianMask } from 'lucide-react';
 import Avatar from '../common/Avatar';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -61,7 +61,7 @@ const CommentInput = ({ onSendComment, isSubmitting = false }) => {
             title={isAnonymous ? 'Posting Anonymously' : 'Post with your profile'}
             aria-label="Toggle anonymous"
           >
-            <span className="text-sm">🎭</span>
+            <VenetianMask className="w-4 h-4" />
           </button>
         </div>
 

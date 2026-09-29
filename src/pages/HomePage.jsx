@@ -196,7 +196,7 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
           onChange={setSearchQuery}
           onClear={() => setSearchQuery('')}
           onSubmit={() => fetchPosts(1, false)}
-          placeholder="🔍 Search rants or keywords..."
+          placeholder="Search rants or keywords..."
         />
 
         {/* Department Filter Chips */}
@@ -229,7 +229,7 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
             emoji="💤"
             title="No rants yet"
             message="Be the first one to say something or spill the campus tea."
-            actionText="Create Rant 🔥"
+            actionText="Create Rant"
             onAction={onOpenCreate}
             className="mt-6"
           />
@@ -263,7 +263,7 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
             {!hasMore && posts.length > 0 && (
               <div className="py-8 text-center text-xs text-slate-400 font-medium flex items-center justify-center gap-2">
                 <span className="h-px w-12 bg-slate-200" />
-                <span>You're all caught up on the campus tea ☕️</span>
+                <span>You're all caught up on the campus tea</span>
                 <span className="h-px w-12 bg-slate-200" />
               </div>
             )}

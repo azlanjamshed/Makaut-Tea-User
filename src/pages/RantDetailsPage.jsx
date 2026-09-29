@@ -93,7 +93,7 @@ const RantDetailsPage = ({ onOpenEdit }) => {
         setPost((prev) =>
           prev ? { ...prev, commentsCount: (prev.commentsCount || 0) + 1 } : prev
         );
-        showToast('Comment added! 💬', 'success');
+        showToast('Comment added!', 'success');
       }
     } catch (err) {
       showToast(err.message || 'Failed to add comment', 'error');

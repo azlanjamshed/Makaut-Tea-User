@@ -1,6 +1,6 @@
 import React from 'react';
 import MobileHeader from '../../components/navigation/MobileHeader';
-import { CheckCircle2, AlertTriangle, XCircle, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, XCircle, ShieldCheck, Megaphone, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const CommunityGuidelinesPage = () => {
@@ -12,8 +12,8 @@ const CommunityGuidelinesPage = () => {
         {/* Banner */}
         <div className="rounded-3xl bg-white border border-[var(--border-color)] p-6 space-y-3 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary-light)] border border-[var(--color-primary)]/20 flex items-center justify-center text-2xl shrink-0">
-              📢
+            <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary-light)] border border-[var(--color-primary)]/20 flex items-center justify-center shrink-0">
+              <Megaphone className="w-6 h-6 text-[var(--color-primary)]" />
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 font-display">
@@ -34,8 +34,8 @@ const CommunityGuidelinesPage = () => {
           {/* Green: Allowed */}
           <div className="p-5 rounded-3xl bg-emerald-50/60 border border-emerald-200 space-y-3 shadow-xs">
             <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm sm:text-base font-display">
-              <span className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-xs">
-                🟢
+              <span className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               </span>
               <span>Allowed & Encouraged</span>
             </div>
@@ -71,8 +71,8 @@ const CommunityGuidelinesPage = () => {
           {/* Yellow: Think twice */}
           <div className="p-5 rounded-3xl bg-amber-50/60 border border-amber-200 space-y-3 shadow-xs">
             <div className="flex items-center gap-2 text-amber-900 font-bold text-sm sm:text-base font-display">
-              <span className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center text-xs">
-                🟡
+              <span className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center">
+                <AlertCircle className="w-4 h-4 text-amber-600" />
               </span>
               <span>Think Twice (Proceed with caution)</span>
             </div>
@@ -103,8 +103,8 @@ const CommunityGuidelinesPage = () => {
           {/* Red: Not allowed */}
           <div className="p-5 rounded-3xl bg-rose-50/60 border border-rose-200 space-y-3 shadow-xs">
             <div className="flex items-center gap-2 text-rose-900 font-bold text-sm sm:text-base font-display">
-              <span className="w-6 h-6 rounded-full bg-rose-100 flex items-center justify-center text-xs">
-                🔴
+              <span className="w-6 h-6 rounded-full bg-rose-100 flex items-center justify-center">
+                <XCircle className="w-4 h-4 text-rose-600" />
               </span>
               <span>Strictly Prohibited</span>
             </div>

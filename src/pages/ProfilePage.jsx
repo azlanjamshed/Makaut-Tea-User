@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   ExternalLink,
   MessageSquare,
+  VenetianMask,
 } from 'lucide-react';
 
 const ProfilePage = ({ onOpenEdit }) => {
@@ -246,8 +247,9 @@ const ProfilePage = ({ onOpenEdit }) => {
                 {/* Identity line: anon + email */}
                 {isSelf ? (
                   <div className="flex items-center gap-1.5 text-[11px] text-slate-500 truncate">
-                    <span className="font-mono text-[var(--color-primary)] font-semibold bg-[var(--color-primary-light)] px-1.5 py-0.5 rounded border border-[var(--color-primary)]/20">
-                      🎭 {profileUser.anonymousUsername || 'anon_student'}
+                    <span className="inline-flex items-center gap-1 font-mono text-[var(--color-primary)] font-semibold bg-[var(--color-primary-light)] px-1.5 py-0.5 rounded border border-[var(--color-primary)]/20">
+                      <VenetianMask className="w-3.5 h-3.5" />
+                      <span>{profileUser.anonymousUsername || 'anon_student'}</span>
                     </span>
                     <span>·</span>
                     <span className="truncate">{profileUser.email}</span>

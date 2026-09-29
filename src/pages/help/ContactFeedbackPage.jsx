@@ -107,8 +107,8 @@ const ContactFeedbackPage = () => {
         {/* Hero Section */}
         <div className="rounded-3xl bg-white border border-[var(--border-color)] p-6 space-y-2 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary-light)] border border-[var(--color-primary)]/20 flex items-center justify-center text-2xl shrink-0">
-              💬
+            <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary-light)] border border-[var(--color-primary)]/20 flex items-center justify-center shrink-0">
+              <MessageSquare className="w-6 h-6 text-[var(--color-primary)]" />
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 font-display">
@@ -127,8 +127,8 @@ const ContactFeedbackPage = () => {
         {/* Success State */}
         {isSubmittedSuccess ? (
           <div className="p-8 rounded-3xl bg-white border border-emerald-200 text-center space-y-4 shadow-sm animate-in fade-in zoom-in-95 duration-200">
-            <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto text-3xl">
-              🎉
+            <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto">
+              <Sparkles className="w-8 h-8 text-emerald-600" />
             </div>
             <div className="space-y-1">
               <h2 className="text-xl font-bold text-slate-900 font-display">
@@ -169,7 +169,7 @@ const ContactFeedbackPage = () => {
                   }`}
                 >
                   <Bug className="w-5 h-5 text-rose-500" />
-                  <span>🐛 Bug</span>
+                  <span>Bug</span>
                 </button>
 
                 <button
@@ -182,7 +182,7 @@ const ContactFeedbackPage = () => {
                   }`}
                 >
                   <Lightbulb className="w-5 h-5 text-amber-500" />
-                  <span>💡 Suggestion</span>
+                  <span>Suggestion</span>
                 </button>
 
                 <button
@@ -195,7 +195,7 @@ const ContactFeedbackPage = () => {
                   }`}
                 >
                   <MessageCircle className="w-5 h-5 text-[var(--color-primary)]" />
-                  <span>💬 Feedback</span>
+                  <span>Feedback</span>
                 </button>
               </div>
 

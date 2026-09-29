@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { resolveImageUrl, getInitials } from '../../utils/helpers';
-import { User, ShieldAlert } from 'lucide-react';
+import { User, ShieldAlert, VenetianMask } from 'lucide-react';
 
 const Avatar = ({
   src,
@@ -35,8 +35,8 @@ const Avatar = ({
           className="w-full h-full object-cover"
         />
       ) : isAnonymous ? (
-        <div className="w-full h-full bg-slate-800 flex items-center justify-center text-slate-300">
-          <span className="select-none">🎭</span>
+        <div className="w-full h-full bg-slate-900 flex items-center justify-center text-purple-300">
+          <VenetianMask className="w-1/2 h-1/2 stroke-[2]" />
         </div>
       ) : (
         <div

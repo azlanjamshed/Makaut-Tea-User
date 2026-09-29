@@ -1,13 +1,27 @@
 import React from 'react';
 import MobileHeader from '../../components/navigation/MobileHeader';
-import { Scroll, Sparkles, Shield, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import {
+  Scroll,
+  Sparkles,
+  Shield,
+  AlertTriangle,
+  CheckCircle2,
+  MessageSquare,
+  ShieldAlert,
+  EyeOff,
+  VenetianMask,
+  Flag,
+  Bot,
+  GraduationCap,
+  Lightbulb,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const RULES = [
   {
     num: 1,
     title: 'Rant freely',
-    emoji: '🗣️',
+    icon: MessageSquare,
     border: 'border-amber-200',
     body: (
       <div className="space-y-1.5 text-slate-600">
@@ -22,7 +36,7 @@ const RULES = [
   {
     num: 2,
     title: "Don't be a menace",
-    emoji: '💀',
+    icon: ShieldAlert,
     border: 'border-rose-200',
     body: (
       <div className="space-y-1.5 text-slate-600">
@@ -36,17 +50,16 @@ const RULES = [
   {
     num: 3,
     title: 'Privacy exists',
-    emoji: '🕵️',
+    icon: EyeOff,
     border: 'border-sky-200',
     body: (
       <div className="space-y-1.5 text-slate-600">
         <p className="font-medium text-slate-800 mb-1">Never share or expose:</p>
         <ul className="list-disc list-inside space-y-1 text-slate-600 text-xs sm:text-sm pl-1">
           <li>Phone numbers</li>
-          <li>Home addresses</li>
-          <li>Passwords</li>
-          <li>Private documents & ID cards</li>
-          <li>Private conversations & personal screenshots</li>
+          <li>Hostel room addresses or private locations</li>
+          <li>ID card photos or registration numbers</li>
+          <li>Private conversations without consent</li>
           <li>Personally identifiable sensitive data</li>
         </ul>
       </div>
@@ -55,7 +68,7 @@ const RULES = [
   {
     num: 4,
     title: "Anonymous doesn't mean anything goes",
-    emoji: '👀',
+    icon: VenetianMask,
     border: 'border-purple-200',
     body: (
       <p className="text-slate-600 leading-relaxed">
@@ -66,7 +79,7 @@ const RULES = [
   {
     num: 5,
     title: "The report button isn't a dislike button",
-    emoji: '🚨',
+    icon: Flag,
     border: 'border-red-200',
     body: (
       <div className="space-y-1.5 text-slate-600">
@@ -80,7 +93,7 @@ const RULES = [
   {
     num: 6,
     title: 'No spam',
-    emoji: '🤖',
+    icon: Bot,
     border: 'border-emerald-200',
     body: (
       <div className="space-y-1.5 text-slate-600">
@@ -97,7 +110,7 @@ const RULES = [
   {
     num: 7,
     title: 'Keep it college-related',
-    emoji: '🏫',
+    icon: GraduationCap,
     border: 'border-cyan-200',
     body: (
       <div className="space-y-1.5 text-slate-600">
@@ -111,7 +124,7 @@ const RULES = [
   {
     num: 8,
     title: 'Common sense wins',
-    emoji: '🧠',
+    icon: Lightbulb,
     border: 'border-indigo-200',
     body: (
       <div className="space-y-1 text-slate-600">
@@ -132,8 +145,8 @@ const HouseRulesPage = () => {
         {/* Header Hero Banner */}
         <div className="rounded-3xl bg-white border border-[var(--border-color)] p-6 space-y-3 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary-light)] border border-[var(--color-primary)]/20 flex items-center justify-center text-2xl shrink-0">
-              📜
+            <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary-light)] border border-[var(--color-primary)]/20 flex items-center justify-center shrink-0">
+              <Scroll className="w-6 h-6 text-[var(--color-primary)]" />
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 font-display">
@@ -152,52 +165,59 @@ const HouseRulesPage = () => {
 
         {/* Rule Cards */}
         <div className="space-y-4">
-          {RULES.map((rule) => (
-            <div
-              key={rule.num}
-              className={`p-5 rounded-3xl bg-white border ${rule.border} space-y-3 transition-all hover:shadow-sm`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <span className="w-7 h-7 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-xs font-mono font-bold text-slate-700">
-                    #{rule.num}
-                  </span>
-                  <h2 className="text-base sm:text-lg font-bold text-slate-900 font-display">
-                    Rule #{rule.num} — {rule.title}
-                  </h2>
+          {RULES.map((rule) => {
+            const Icon = rule.icon;
+            return (
+              <div
+                key={rule.num}
+                className={`p-5 rounded-3xl bg-white border ${rule.border} space-y-3 transition-all hover:shadow-sm`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-7 h-7 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-xs font-mono font-bold text-slate-700">
+                      #{rule.num}
+                    </span>
+                    <h2 className="text-base sm:text-lg font-bold text-slate-900 font-display">
+                      Rule #{rule.num} — {rule.title}
+                    </h2>
+                  </div>
+                  {Icon && (
+                    <div className="w-8 h-8 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-600">
+                      <Icon className="w-4 h-4" />
+                    </div>
+                  )}
                 </div>
-                <span className="text-2xl">{rule.emoji}</span>
-              </div>
 
-              <div className="text-xs sm:text-sm leading-relaxed pl-1">
-                {rule.body}
+                <div className="text-xs sm:text-sm leading-relaxed pl-1">
+                  {rule.body}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Bottom CTA to Guidelines & Help */}
         <div className="p-5 rounded-3xl bg-white border border-[var(--border-color)] flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left shadow-sm">
           <div>
             <h3 className="text-sm font-bold text-slate-900 font-display">
-              Have questions about moderation?
+              Need more clarification?
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Read our Reporting Guide or see Community Guidelines.
+            <p className="text-xs text-slate-500">
+              Read our full Community Guidelines and Reporting details.
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Link
-              to="/reporting-guide"
-              className="px-3.5 py-2 rounded-xl bg-slate-50 border border-[var(--border-color)] hover:border-slate-300 text-slate-700 text-xs font-bold transition-colors"
-            >
-              Reporting Guide
-            </Link>
-            <Link
               to="/guidelines"
-              className="px-3.5 py-2 rounded-xl bg-[var(--color-primary)] hover:opacity-90 text-white text-xs font-bold transition-colors shadow-xs"
+              className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
             >
               Guidelines
+            </Link>
+            <Link
+              to="/help"
+              className="px-3.5 py-2 rounded-xl bg-[var(--color-primary)] text-white text-xs font-bold transition-colors hover:bg-[var(--color-primary-hover)]"
+            >
+              Help Center
             </Link>
           </div>
         </div>

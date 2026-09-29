@@ -53,7 +53,7 @@ const CommentCard = ({
   );
 
   const authorName = isAdminComment
-    ? (comment.user?.name || 'Head of MAKAU-TEA Affairs 📢')
+    ? (comment.user?.name || 'Head of MAKAU-TEA Affairs')
     : comment.isAnonymous
     ? comment.user?.anonymousUsername || 'Anonymous'
     : comment.user?.name || 'Student';
@@ -111,7 +111,7 @@ const CommentCard = ({
       setReplyText('');
       setShowReplyInput(false);
       setShowRepliesList(true);
-      showToast('Reply added! 💬', 'success');
+      showToast('Reply added!', 'success');
       onReplyAdded?.();
     } catch (err) {
       showToast(err.message || 'Failed to post reply', 'error');
@@ -283,7 +283,7 @@ const CommentCard = ({
                   reply.user?.role === 'admin'
                 );
                 const replyAuthorName = isReplyAdmin
-                  ? (reply.user?.name || 'Head of MAKAU-TEA Affairs 📢')
+                  ? (reply.user?.name || 'Head of MAKAU-TEA Affairs')
                   : reply.isAnonymous
                   ? reply.user?.anonymousUsername || 'Anonymous'
                   : reply.user?.name || 'Student';
