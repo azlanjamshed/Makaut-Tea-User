@@ -68,13 +68,12 @@ export const getAvatarBg = (seed = 'anon') => {
 export const getAvatarGradient = getAvatarBg;
 
 /**
- * Extracts initials from user name
+ * Extracts the first letter from user name
  */
 export const getInitials = (name = 'A') => {
   if (!name) return 'A';
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  const clean = name.trim();
+  return clean ? clean.charAt(0).toUpperCase() : 'A';
 };
 
 /**

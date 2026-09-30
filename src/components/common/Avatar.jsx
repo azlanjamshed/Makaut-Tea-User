@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { resolveImageUrl, getInitials } from '../../utils/helpers';
-import { User, ShieldAlert, VenetianMask } from 'lucide-react';
+import { resolveImageUrl, getInitials, getAvatarBg } from '../../utils/helpers';
+import { VenetianMask } from 'lucide-react';
 
 const Avatar = ({
   src,
@@ -20,6 +20,8 @@ const Avatar = ({
   };
 
   const imageSrc = !isAnonymous && src && !imgError ? resolveImageUrl(src) : null;
+  const firstLetter = getInitials(name);
+  const bgColor = getAvatarBg(name || 'user');
 
   return (
     <div
@@ -42,9 +44,9 @@ const Avatar = ({
         </div>
       ) : (
         <div
-          className="w-full h-full bg-sky-700 flex items-center justify-center text-white font-medium"
+          className={`w-full h-full ${bgColor} flex items-center justify-center text-white font-bold select-none`}
         >
-          {getInitials(name)}
+          {firstLetter}
         </div>
       )}
     </div>
