@@ -1,6 +1,17 @@
-import React from 'react';
-import MobileHeader from '../../components/navigation/MobileHeader';
-import { ShieldCheck, Eye, EyeOff, Lock, AlertTriangle, UserCheck, ShieldAlert, Shield, VenetianMask, X } from 'lucide-react';
+import React from "react";
+import MobileHeader from "../../components/navigation/MobileHeader";
+import {
+  ShieldCheck,
+  Eye,
+  EyeOff,
+  Lock,
+  AlertTriangle,
+  UserCheck,
+  ShieldAlert,
+  Shield,
+  VenetianMask,
+  X,
+} from "lucide-react";
 
 const PrivacyPage = () => {
   return (
@@ -24,8 +35,9 @@ const PrivacyPage = () => {
             </div>
           </div>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            Anonymity is a cornerstone of this platform. It allows honest discussion without fear of judgment.
-            Here is a crystal-clear breakdown of how identity privacy works and your responsibilities.
+            Anonymity is a cornerstone of this platform. It allows honest
+            discussion without fear of judgment. Here is a crystal-clear
+            breakdown of how identity privacy works and your responsibilities.
           </p>
         </div>
 
@@ -37,8 +49,8 @@ const PrivacyPage = () => {
           </div>
 
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            When you register, you provide your name, email, semester, and department.
-            Here is how your information is partitioned:
+            When you register, you provide your name, email, semester, and
+            department. Here is how your information is partitioned:
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
@@ -48,7 +60,8 @@ const PrivacyPage = () => {
                 <span>Publicly Visible</span>
               </span>
               <p className="text-xs text-slate-600">
-                Your name and avatar (only on non-anonymous posts), department / semester tag, and post text.
+                Your name and avatar (only on non-anonymous posts), department /
+                semester tag, and post text.
               </p>
             </div>
 
@@ -58,7 +71,8 @@ const PrivacyPage = () => {
                 <span>Always Hidden / Private</span>
               </span>
               <p className="text-xs text-slate-600">
-                Your email address, hashed passwords, internal student IDs, and raw device identifiers are never exposed publicly.
+                Your email address, hashed passwords, internal student IDs, and
+                raw device identifiers are never exposed publicly.
               </p>
             </div>
           </div>
@@ -68,11 +82,14 @@ const PrivacyPage = () => {
         <div className="p-5 rounded-3xl bg-white border border-[var(--border-color)] space-y-4 shadow-sm">
           <div className="flex items-center gap-2 text-[var(--color-primary)] font-bold text-sm sm:text-base font-display">
             <EyeOff className="w-5 h-5 text-[var(--color-primary)]" />
-            <span className="text-slate-900">Section 2 — Anonymous Posts Side-by-Side</span>
+            <span className="text-slate-900">
+              Section 2 — Anonymous Posts Side-by-Side
+            </span>
           </div>
 
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            When you check "Post anonymously", your real profile avatar and name are detached from the post on student feeds.
+            When you check "Post anonymously", your real profile avatar and name
+            are detached from the post on student feeds.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
@@ -92,7 +109,9 @@ const PrivacyPage = () => {
                   A
                 </div>
                 <div>
-                  <span className="font-bold text-xs text-slate-900 block">Azlan · IT</span>
+                  <span className="font-bold text-xs text-slate-900 block">
+                    User . IT
+                  </span>
                   <span className="text-[10px] text-slate-500">2h ago</span>
                 </div>
               </div>
@@ -119,7 +138,9 @@ const PrivacyPage = () => {
                   <VenetianMask className="w-4 h-4 text-purple-700" />
                 </div>
                 <div>
-                  <span className="font-bold text-xs text-slate-900 block">Anonymous Student · IT</span>
+                  <span className="font-bold text-xs text-slate-900 block">
+                    Anonymous Student · IT
+                  </span>
                   <span className="text-[10px] text-slate-500">2h ago</span>
                 </div>
               </div>
@@ -178,18 +199,24 @@ const PrivacyPage = () => {
           </div>
 
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            We believe in honest transparency. While other students and viewers cannot see your identity on anonymous posts:
+            We believe in honest transparency. While other students and viewers
+            cannot see your identity on anonymous posts:
           </p>
 
           <ul className="list-disc list-inside space-y-1.5 text-xs sm:text-sm text-slate-600 pl-1 leading-relaxed">
             <li>
-              System databases store associated records to prevent illegal activity, severe physical harm threats, or platform sabotage.
+              System databases store associated records to prevent illegal
+              activity, severe physical harm threats, or platform sabotage.
             </li>
             <li>
-              In severe cases involving criminal bomb threats, severe harassment, or legal court orders, internal logs may be subpoenaed by law enforcement.
+              In severe cases involving criminal bomb threats, severe
+              harassment, or legal court orders, internal logs may be subpoenaed
+              by law enforcement.
             </li>
             <li>
-              Anonymity protects your social standing and student expression—it is <strong>never</strong> a legal shield for hate crimes or illegal threats.
+              Anonymity protects your social standing and student expression—it
+              is <strong>never</strong> a legal shield for hate crimes or
+              illegal threats.
             </li>
           </ul>
         </div>
