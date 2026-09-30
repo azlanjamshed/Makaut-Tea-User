@@ -39,6 +39,9 @@ const GoogleSignInButton = ({
   const handleSignIn = async () => {
     setIsLoading(true);
     try {
+      try {
+        sessionStorage.removeItem("just_logged_out");
+      } catch (_) {}
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {

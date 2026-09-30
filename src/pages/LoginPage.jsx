@@ -27,14 +27,16 @@ const LoginPage = () => {
   useEffect(() => {
     let isMounted = true;
 
-    // Only process redirect if URL contains OAuth credentials
-    const hasOAuthParams =
-      window.location.hash.includes("access_token") ||
-      window.location.hash.includes("error") ||
-      new URLSearchParams(window.location.search).has("code");
+    const justLoggedOut = sessionStorage.getItem("just_logged_out") === "true";
 
     const processSession = async (session) => {
-      if (!session?.user || isProcessingRef.current) return;
+      if (
+        !session?.user ||
+        isProcessingRef.current ||
+        sessionStorage.getItem("just_logged_out") === "true"
+      ) {
+        return;
+      }
       isProcessingRef.current = true;
       if (isMounted) setIsProcessing(true);
 
@@ -82,7 +84,7 @@ const LoginPage = () => {
       }
     };
 
-    if (hasOAuthParams) {
+    if (!justLoggedOut) {
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (session?.user && isMounted) {
           processSession(session);
@@ -94,10 +96,10 @@ const LoginPage = () => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (
-        event === "SIGNED_IN" &&
-        hasOAuthParams &&
+        (event === "SIGNED_IN" || event === "USER_UPDATED") &&
         session?.user &&
-        isMounted
+        isMounted &&
+        sessionStorage.getItem("just_logged_out") !== "true"
       ) {
         processSession(session);
       }

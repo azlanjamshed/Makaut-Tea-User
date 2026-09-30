@@ -34,9 +34,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = useCallback(async () => {
-    saveSession(null, null);
     try {
-      await supabase.auth.signOut({ scope: 'local' });
+      sessionStorage.setItem('just_logged_out', 'true');
     } catch (_) {}
     try {
       Object.keys(localStorage).forEach((key) => {
@@ -44,6 +43,10 @@ export const AuthProvider = ({ children }) => {
           localStorage.removeItem(key);
         }
       });
+    } catch (_) {}
+    saveSession(null, null);
+    try {
+      await supabase.auth.signOut({ scope: 'local' });
     } catch (_) {}
     authApi.logout().catch(() => {});
   }, []);
