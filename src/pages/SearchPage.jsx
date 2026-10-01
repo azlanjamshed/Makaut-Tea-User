@@ -19,6 +19,7 @@ import * as usersApi from '../api/users';
 import { useDebounce } from '../hooks/useDebounce';
 import {
   SlidersHorizontal,
+  Search,
   User,
   Users,
   MessageSquare,

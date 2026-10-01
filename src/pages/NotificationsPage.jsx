@@ -184,7 +184,7 @@ const NotificationsPage = ({ onRefreshUnreadCount }) => {
           <ErrorState
             title="Something went wrong"
             message={error || "Could not load notifications. Tap below to try again."}
-            onRetry={fetchNotifications}
+            onRetry={() => refetch()}
             actionText="Try Again"
           />
         ) : notifications.length === 0 ? (
