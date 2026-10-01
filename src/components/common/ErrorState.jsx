@@ -16,8 +16,11 @@ const ErrorState = ({
     >
       <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-500 mb-4 shadow-xs">
         {IconProp ? (
-          typeof IconProp === 'function' ? (
-            <IconProp className="w-7 h-7 stroke-[1.75]" />
+          React.isValidElement(IconProp) ? (
+            IconProp
+          ) : typeof IconProp === 'function' ||
+            (typeof IconProp === 'object' && IconProp !== null) ? (
+            React.createElement(IconProp, { className: 'w-7 h-7 stroke-[1.75]' })
           ) : (
             IconProp
           )

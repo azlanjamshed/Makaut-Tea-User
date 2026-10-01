@@ -30,7 +30,15 @@ const Badge = ({
         variants[variant] || variants.default
       } ${sizes[size] || sizes.sm} ${className}`}
     >
-      {Icon && <Icon className="w-3.5 h-3.5 shrink-0" />}
+      {Icon && (
+        React.isValidElement(Icon) ? (
+          Icon
+        ) : typeof Icon === 'function' || (typeof Icon === 'object' && Icon !== null) ? (
+          <Icon className="w-3.5 h-3.5 shrink-0" />
+        ) : (
+          Icon
+        )
+      )}
       {children}
     </span>
   );

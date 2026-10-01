@@ -43,14 +43,22 @@ const EmptyState = ({
   // Resolve icon component/element
   let renderedIcon = null;
   if (IconProp) {
-    if (typeof IconProp === 'function') {
-      renderedIcon = <IconProp className="w-7 h-7 stroke-[1.75]" />;
+    if (React.isValidElement(IconProp)) {
+      renderedIcon = IconProp;
+    } else if (
+      typeof IconProp === 'function' ||
+      (typeof IconProp === 'object' && IconProp !== null)
+    ) {
+      const IconComponent = IconProp;
+      renderedIcon = <IconComponent className="w-7 h-7 stroke-[1.75]" />;
     } else {
       renderedIcon = IconProp;
     }
   } else if (emoji && ICON_MAP[emoji]) {
     const Mapped = ICON_MAP[emoji];
     renderedIcon = <Mapped className="w-7 h-7 stroke-[1.75]" />;
+  } else if (emoji) {
+    renderedIcon = <span className="text-2xl">{emoji}</span>;
   } else {
     renderedIcon = <MessageSquareDashed className="w-7 h-7 stroke-[1.75]" />;
   }
@@ -82,7 +90,15 @@ const EmptyState = ({
           variant="primary"
           className="shadow-xs font-semibold px-5"
         >
-          {actionIcon && <span className="mr-1.5">{actionIcon}</span>}
+          {actionIcon && (
+            <span className="mr-1.5 inline-flex items-center">
+              {React.isValidElement(actionIcon)
+                ? actionIcon
+                : typeof actionIcon === 'function' || (typeof actionIcon === 'object' && actionIcon !== null)
+                ? React.createElement(actionIcon, { className: 'w-4 h-4' })
+                : actionIcon}
+            </span>
+          )}
           {buttonText}
         </Button>
       )}
