@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   MoreVertical,
@@ -105,7 +105,10 @@ const RantCard = ({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const imageSrc = rant.image ? resolveImageUrl(rant.image) : null;
+  const imageSrc = rant.image
+    ? resolveImageUrl(rant.image, isDetail ? 'detail' : 'feed')
+    : null;
+  const fullImageSrc = rant.image ? resolveImageUrl(rant.image, 'full') : imageSrc;
 
   return (
     <Card
@@ -308,13 +311,14 @@ const RantCard = ({
               alt="Rant visual"
               className="max-h-[380px] sm:max-h-[460px] w-auto h-auto max-w-full object-contain rounded-xl transition-transform duration-300 group-hover/postimg:scale-[1.01]"
               loading="lazy"
+              decoding="async"
             />
           </div>
 
           <ImageLightbox
             isOpen={isLightboxOpen}
             onClose={() => setIsLightboxOpen(false)}
-            imageSrc={imageSrc}
+            imageSrc={fullImageSrc}
             alt={`Photo by ${authorName}`}
             caption={
               isOfficial
@@ -341,4 +345,4 @@ const RantCard = ({
   );
 };
 
-export default RantCard;
+export default memo(RantCard);

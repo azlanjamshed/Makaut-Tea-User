@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import MobileHeader from '../components/navigation/MobileHeader';
 import SearchBar from '../components/rants/SearchBar';
 import FilterBar from '../components/rants/FilterBar';
@@ -7,94 +8,119 @@ import { RantCardSkeleton } from '../components/common/Skeleton';
 import EmptyState from '../components/common/EmptyState';
 import ErrorState from '../components/common/ErrorState';
 import Button from '../components/common/Button';
-import ConfirmationModal from '../components/common/ConfirmationModal';
-import ReportSheet from '../components/reports/ReportSheet';
 import MobileAdminBroadcast from '../components/rants/MobileAdminBroadcast';
+
+// Lazy-loaded on-demand modal components
+const ConfirmationModal = React.lazy(() => import('../components/common/ConfirmationModal'));
+const ReportSheet = React.lazy(() => import('../components/reports/ReportSheet'));
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import * as postsApi from '../api/posts';
-import { Sparkles, RefreshCw } from 'lucide-react';
+import { Sparkles, RefreshCw, MessageSquareDashed, Search } from 'lucide-react';
+import { useDebounce } from '../hooks/useDebounce';
 
 const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
   const { user, isAuthenticated } = useAuth();
   const { showToast } = useToast();
+  const queryClient = useQueryClient();
 
-  const [posts, setPosts] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
+  const debouncedSearchQuery = useDebounce(searchQuery, 400);
   const observerTarget = useRef(null);
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [error, setError] = useState(null);
 
   // Modals state
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [reportTarget, setReportTarget] = useState(null);
 
-  const fetchPosts = useCallback(
-    async (pageNum = 1, append = false) => {
-      if (pageNum === 1) setIsLoading(true);
-      else setIsLoadingMore(true);
-      setError(null);
-
-      try {
-        const res = await postsApi.getPosts({
-          page: pageNum,
-          limit: 15,
-          department: selectedDepartment,
-          q: searchQuery.trim(),
-        });
-
-        if (res.success) {
-          const fetchedPosts = res.data || [];
-          if (append) {
-            setPosts((prev) => [...prev, ...fetchedPosts]);
-          } else {
-            setPosts(fetchedPosts);
-          }
-          setHasMore(pageNum < (res.pagination?.pages || 1));
-          setPage(pageNum);
-        }
-      } catch (err) {
-        setError(err.message || 'Failed to fetch rants');
-      } finally {
-        setIsLoading(false);
-        setIsLoadingMore(false);
-      }
+  // TanStack Query: Infinite feed query with automatic caching and pagination
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    error: queryError,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: ['posts', selectedDepartment, debouncedSearchQuery],
+    queryFn: async ({ pageParam = 1 }) => {
+      const res = await postsApi.getPosts({
+        page: pageParam,
+        limit: 10,
+        department: selectedDepartment,
+        q: debouncedSearchQuery.trim(),
+        skipCache: true,
+      });
+      return res;
     },
-    [selectedDepartment, searchQuery]
+    getNextPageParam: (lastPage) => {
+      if (lastPage?.pagination?.hasMore) {
+        return lastPage.pagination.page + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+    staleTime: 1000 * 60 * 3, // 3 minutes fresh cache: navigating away & back uses cached posts with 0 network calls
+    gcTime: 1000 * 60 * 15,   // Keep cache in memory for 15 minutes
+  });
+
+  // Cached feed: Instant synchronous read from TanStack Query cache on mount & return
+  const posts = useMemo(() => {
+    return data?.pages.flatMap((page) => page?.data || []) || [];
+  }, [data]);
+
+  // Helper to keep TanStack Query cache updated on local mutations
+  const updateQueryCachePost = useCallback(
+    (postId, updater) => {
+      queryClient.setQueryData(
+        ['posts', selectedDepartment, debouncedSearchQuery],
+        (oldData) => {
+          if (!oldData || !oldData.pages) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              data: Array.isArray(page.data)
+                ? page.data.map((p) =>
+                    (p.id || p._id) === postId ? updater(p) : p
+                  )
+                : page.data,
+            })),
+          };
+        }
+      );
+    },
+    [queryClient, selectedDepartment, debouncedSearchQuery]
   );
 
-  useEffect(() => {
-    fetchPosts(1, false);
-  }, [fetchPosts]);
+  const error = queryError?.message || null;
+  const hasMore = Boolean(hasNextPage);
+  const isLoadingMore = Boolean(isFetchingNextPage);
 
   // Listen for logo or home click to refresh recent rants
   useEffect(() => {
     const handleHomeRefresh = () => {
       setSelectedDepartment('All');
       setSearchQuery('');
-      fetchPosts(1, false);
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
     };
 
     window.addEventListener('rantea:refresh-home-feed', handleHomeRefresh);
     return () => {
       window.removeEventListener('rantea:refresh-home-feed', handleHomeRefresh);
     };
-  }, [fetchPosts]);
+  }, [queryClient]);
 
   // Infinite scroll: auto-fetch next page as user scrolls near bottom
   useEffect(() => {
-    if (!hasMore || isLoading || isLoadingMore) return;
+    if (!hasNextPage || isLoading || isFetchingNextPage) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
-          fetchPosts(page + 1, true);
+        if (entries[0]?.isIntersecting) {
+          fetchNextPage();
         }
       },
       { threshold: 0.1, rootMargin: '250px' }
@@ -110,62 +136,62 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
         observer.unobserve(currentTarget);
       }
     };
-  }, [hasMore, isLoading, isLoadingMore, page, fetchPosts]);
+  }, [hasNextPage, isLoading, isFetchingNextPage, fetchNextPage]);
 
-  const handleReact = async (targetPost, emoji) => {
-    if (!isAuthenticated) {
-      showToast('Please sign in to react to rants', 'warning');
-      return;
-    }
-
-    const postId = targetPost.id || targetPost._id;
-
-    // Optimistic UI updates
-    setPosts((prev) =>
-      prev.map((p) => {
-        if ((p.id || p._id) === postId) {
-          const counts = { ...(p.reactions?.counts || {}) };
-          const prevUserReaction = p.reactions?.userReaction;
-          let newUserReaction = emoji;
-
-          if (prevUserReaction === emoji) {
-            // Toggle off
-            counts[emoji] = Math.max((counts[emoji] || 1) - 1, 0);
-            newUserReaction = null;
-          } else {
-            // Toggle on / change
-            if (prevUserReaction && counts[prevUserReaction]) {
-              counts[prevUserReaction] = Math.max(counts[prevUserReaction] - 1, 0);
-            }
-            counts[emoji] = (counts[emoji] || 0) + 1;
-          }
-
-          return {
-            ...p,
-            reactions: {
-              ...p.reactions,
-              counts,
-              userReaction: newUserReaction,
-            },
-          };
-        }
-        return p;
-      })
-    );
-
-    try {
-      const res = await postsApi.reactToPost(postId, emoji);
-      // Sync fresh server response
-      if (res.data) {
-        setPosts((prev) =>
-          prev.map((p) => ((p.id || p._id) === postId ? res.data : p))
-        );
+  const handleReact = useCallback(
+    async (targetPost, emoji) => {
+      if (!isAuthenticated) {
+        showToast('Please sign in to react to rants', 'warning');
+        return;
       }
-    } catch (err) {
-      showToast(err.message || 'Failed to save reaction', 'error');
-      fetchPosts(page, false);
-    }
-  };
+
+      const postId = targetPost.id || targetPost._id;
+
+      // Optimistic reaction calculations
+      const applyReactionUpdate = (p) => {
+        const counts = { ...(p.reactions?.counts || {}) };
+        const prevUserReaction = p.reactions?.userReaction;
+        let newUserReaction = emoji;
+
+        if (prevUserReaction === emoji) {
+          counts[emoji] = Math.max((counts[emoji] || 1) - 1, 0);
+          newUserReaction = null;
+        } else {
+          if (prevUserReaction && counts[prevUserReaction]) {
+            counts[prevUserReaction] = Math.max(counts[prevUserReaction] - 1, 0);
+          }
+          counts[emoji] = (counts[emoji] || 0) + 1;
+        }
+
+        return {
+          ...p,
+          reactions: {
+            ...p.reactions,
+            counts,
+            userReaction: newUserReaction,
+          },
+        };
+      };
+
+      // Optimistic reaction update directly in TanStack Query cache
+      updateQueryCachePost(postId, applyReactionUpdate);
+
+      try {
+        const res = await postsApi.reactToPost(postId, emoji);
+        // Sync fresh server response to query cache
+        if (res.data) {
+          updateQueryCachePost(postId, () => res.data);
+        }
+      } catch (err) {
+        showToast(err.message || 'Failed to save reaction', 'error');
+      }
+    },
+    [isAuthenticated, showToast, updateQueryCachePost]
+  );
+
+  const handleEdit = useCallback((r) => onOpenEdit?.(r), [onOpenEdit]);
+  const handleDelete = useCallback((r) => setDeleteTarget(r), []);
+  const handleReport = useCallback((r) => setReportTarget(r), []);
 
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
@@ -174,7 +200,22 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
 
     try {
       await postsApi.deletePost(postId);
-      setPosts((prev) => prev.filter((p) => (p.id || p._id) !== postId));
+      queryClient.setQueryData(
+        ['posts', selectedDepartment, debouncedSearchQuery],
+        (oldData) => {
+          if (!oldData || !oldData.pages) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              data: Array.isArray(page.data)
+                ? page.data.filter((p) => (p.id || p._id) !== postId)
+                : page.data,
+            })),
+          };
+        }
+      );
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
       showToast('Rant deleted successfully', 'success');
       setDeleteTarget(null);
     } catch (err) {
@@ -195,7 +236,7 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
           value={searchQuery}
           onChange={setSearchQuery}
           onClear={() => setSearchQuery('')}
-          onSubmit={() => fetchPosts(1, false)}
+          onSubmit={() => refetch()}
           placeholder="Search rants or keywords..."
         />
 
@@ -204,7 +245,6 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
           selectedDepartment={selectedDepartment}
           onSelectDepartment={(dept) => {
             setSelectedDepartment(dept);
-            setPage(1);
           }}
         />
 
@@ -220,17 +260,30 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
           </div>
         ) : error ? (
           <ErrorState
-            title="Could not load rants"
-            message={error}
-            onRetry={() => fetchPosts(1, false)}
+            title="Something went wrong"
+            message={error || "Could not load the rants feed. Check your internet connection and try again."}
+            onRetry={() => refetch()}
+            actionText="Try Again"
           />
         ) : posts.length === 0 ? (
           <EmptyState
-            emoji="💤"
-            title="No rants yet"
-            message="Be the first one to say something or spill the campus tea."
-            actionText="Create Rant"
-            onAction={onOpenCreate}
+            icon={searchQuery ? Search : MessageSquareDashed}
+            title={
+              searchQuery
+                ? `No rants found for "${searchQuery}"`
+                : selectedDepartment !== 'All'
+                ? `No rants in ${selectedDepartment} yet`
+                : 'No rants yet'
+            }
+            message={
+              searchQuery
+                ? 'Try searching with different keywords or clear the search to see all posts.'
+                : selectedDepartment !== 'All'
+                ? `Be the first one to spill the tea in ${selectedDepartment}.`
+                : 'Be the first one to spill the tea.'
+            }
+            actionText={searchQuery ? 'Clear Search' : 'Spill The Tea'}
+            onAction={searchQuery ? () => setSearchQuery('') : onOpenCreate}
             className="mt-6"
           />
         ) : (
@@ -240,22 +293,21 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
                 key={rant.id || rant._id}
                 rant={rant}
                 onReact={handleReact}
-                onEdit={(r) => onOpenEdit?.(r)}
-                onDelete={(r) => setDeleteTarget(r)}
-                onReport={(r) => setReportTarget(r)}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onReport={handleReport}
               />
             ))}
 
             {/* Infinite Scroll Sentinel */}
             {hasMore && (
-              <div ref={observerTarget} className="py-6 flex flex-col items-center justify-center gap-2">
+              <div ref={observerTarget} className="py-2">
                 {isLoadingMore ? (
-                  <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                    <RefreshCw className="w-4 h-4 animate-spin text-[var(--color-primary)]" />
-                    <span>Pouring more tea...</span>
+                  <div className="space-y-4 pt-2">
+                    <RantCardSkeleton />
                   </div>
                 ) : (
-                  <span className="text-[11px] text-slate-400">Scroll for more rants</span>
+                  <div className="h-8" />
                 )}
               </div>
             )}
@@ -272,23 +324,31 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
       </main>
 
       {/* Confirmation Modal for Delete */}
-      <ConfirmationModal
-        isOpen={Boolean(deleteTarget)}
-        onClose={() => setDeleteTarget(null)}
-        onConfirm={handleDeleteConfirm}
-        title="Delete this rant?"
-        message="This action cannot be undone. All reactions and comments on this rant will also be removed."
-        confirmText="Delete Rant"
-        isLoading={isDeleting}
-      />
+      {deleteTarget && (
+        <React.Suspense fallback={null}>
+          <ConfirmationModal
+            isOpen={Boolean(deleteTarget)}
+            onClose={() => setDeleteTarget(null)}
+            onConfirm={handleDeleteConfirm}
+            title="Delete this rant?"
+            message="This action cannot be undone. All reactions and comments on this rant will also be removed."
+            confirmText="Delete Rant"
+            isLoading={isDeleting}
+          />
+        </React.Suspense>
+      )}
 
       {/* Report Bottom Sheet */}
-      <ReportSheet
-        isOpen={Boolean(reportTarget)}
-        onClose={() => setReportTarget(null)}
-        targetType="post"
-        targetId={reportTarget?.id || reportTarget?._id}
-      />
+      {reportTarget && (
+        <React.Suspense fallback={null}>
+          <ReportSheet
+            isOpen={Boolean(reportTarget)}
+            onClose={() => setReportTarget(null)}
+            targetType="post"
+            targetId={reportTarget?.id || reportTarget?._id}
+          />
+        </React.Suspense>
+      )}
     </div>
   );
 };

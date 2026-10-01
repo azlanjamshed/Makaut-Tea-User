@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { motion } from "framer-motion";
 import { MessageSquare, Eye } from "lucide-react";
 import { REACTIONS } from "../../utils/constants";
@@ -100,4 +100,4 @@ const ReactionBar = ({
   );
 };
 
-export default ReactionBar;
+export default memo(ReactionBar);

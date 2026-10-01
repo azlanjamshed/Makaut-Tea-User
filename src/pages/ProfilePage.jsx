@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import MobileHeader from '../components/navigation/MobileHeader';
 import Avatar from '../components/common/Avatar';
 import Badge from '../components/common/Badge';
@@ -39,15 +40,50 @@ const ProfilePage = ({ onOpenEdit }) => {
     (authUser &&
       (String(authUser.id) === String(id) || String(authUser._id) === String(id)));
 
-  // Profile user state
-  const [profileUser, setProfileUser] = useState(isSelf ? authUser : null);
-  const [isLoadingUser, setIsLoadingUser] = useState(!isSelf);
-  const [userError, setUserError] = useState(null);
+  const targetId = isSelf ? (authUser?.id || authUser?._id) : id;
 
-  // Posts state
+  // TanStack Query for user profile details
+  const {
+    data: fetchedUser,
+    isLoading: isLoadingUser,
+    error: userQueryError,
+  } = useQuery({
+    queryKey: ['user-profile', targetId],
+    queryFn: async () => {
+      const res = await usersApi.getUserById(targetId);
+      return res?.data || null;
+    },
+    enabled: Boolean(targetId && !isSelf),
+  });
+
+  const profileUser = isSelf ? authUser : (fetchedUser || null);
+  const userError = userQueryError?.message || null;
+
+  // TanStack Query for user posts
+  const {
+    data: fetchedPosts,
+    isLoading: isLoadingPosts,
+  } = useQuery({
+    queryKey: ['user-rants', targetId],
+    queryFn: async () => {
+      const res = await postsApi.getPostsByUser(targetId);
+      return res?.data || [];
+    },
+    enabled: Boolean(targetId),
+  });
+
+  // TanStack Query for self reaction stats
+  const { data: myReactionsData } = useQuery({
+    queryKey: ['my-reactions-count', targetId],
+    queryFn: async () => {
+      const res = await postsApi.getMyReactedPosts({ limit: 100 });
+      return res?.data?.length || 0;
+    },
+    enabled: Boolean(isSelf && isAuthenticated),
+  });
+
+  const totalReactionsGiven = myReactionsData || 0;
   const [posts, setPosts] = useState([]);
-  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
-  const [totalReactionsGiven, setTotalReactionsGiven] = useState(0);
 
   // Modals & interaction state
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -55,67 +91,17 @@ const ProfilePage = ({ onOpenEdit }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [reportTarget, setReportTarget] = useState(null);
 
-  // Fetch target user data and posts
-  const fetchProfileData = useCallback(async () => {
-    setUserError(null);
-
-    // If viewing self and not authenticated, redirect to login
+  useEffect(() => {
     if (isSelf && !isAuthenticated) {
       navigate('/login');
-      return;
     }
-
-    const targetId = isSelf
-      ? authUser?.id || authUser?._id
-      : id;
-
-    if (!targetId) return;
-
-    // Fetch user details if not self
-    if (!isSelf) {
-      setIsLoadingUser(true);
-      try {
-        const res = await usersApi.getUserById(targetId);
-        if (res.success && res.data) {
-          setProfileUser(res.data);
-        } else {
-          setUserError('User not found');
-        }
-      } catch (err) {
-        setUserError(err.message || 'Unable to load profile');
-      } finally {
-        setIsLoadingUser(false);
-      }
-    } else {
-      setProfileUser(authUser);
-      setIsLoadingUser(false);
-    }
-
-    // Fetch posts for target user
-    setIsLoadingPosts(true);
-    try {
-      const postsRes = await postsApi.getPostsByUser(targetId);
-      if (postsRes.success) {
-        setPosts(postsRes.data || []);
-      }
-
-      // If self, also fetch reaction count for stats bar
-      if (isSelf && isAuthenticated) {
-        const reactionsRes = await postsApi.getMyReactedPosts({ limit: 100 });
-        if (reactionsRes.success) {
-          setTotalReactionsGiven(reactionsRes.data?.length || 0);
-        }
-      }
-    } catch (err) {
-      // Non-blocking error for posts
-    } finally {
-      setIsLoadingPosts(false);
-    }
-  }, [id, isSelf, authUser, isAuthenticated, navigate]);
+  }, [isSelf, isAuthenticated, navigate]);
 
   useEffect(() => {
-    fetchProfileData();
-  }, [fetchProfileData]);
+    if (fetchedPosts) {
+      setPosts(fetchedPosts);
+    }
+  }, [fetchedPosts]);
 
   const handleLogout = () => {
     logout();
@@ -363,14 +349,14 @@ const ProfilePage = ({ onOpenEdit }) => {
             </div>
           ) : posts.length === 0 ? (
             <EmptyState
-              emoji="📝"
-              title="No rants yet"
+              icon={FileText}
+              title={isSelf ? 'No rants yet' : `No rants from ${profileUser?.name || 'this student'} yet`}
               message={
                 isSelf
-                  ? "You haven't posted any rants yet. Share what's on your mind!"
-                  : `${profileUser.name} hasn't posted any public rants yet.`
+                  ? 'Be the first one to spill the tea.'
+                  : `${profileUser?.name || 'This student'} hasn't posted any public rants yet.`
               }
-              actionText={isSelf ? 'Create a Rant' : undefined}
+              actionText={isSelf ? 'Spill The Tea' : undefined}
               onAction={isSelf ? () => onOpenEdit?.(null) : undefined}
               className="py-12"
             />

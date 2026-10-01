@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BrowserRouter as Router,
   Routes,
@@ -9,13 +10,16 @@ import {
 import { Loader2 } from "lucide-react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ToastProvider, useToast } from "./context/ToastContext";
+import ErrorBoundary from "./components/common/ErrorBoundary";
 import DesktopSidebar from "./components/navigation/DesktopSidebar";
 import DesktopTrendingWidget from "./components/navigation/DesktopTrendingWidget";
 import MobileBottomNav from "./components/navigation/MobileBottomNav";
-import CreateRantSheet from "./components/rants/CreateRantSheet";
-import OnboardingModal from "./components/auth/OnboardingModal";
 import appLogo from "./assets/logo.png";
 import * as notifApi from "./api/notifications";
+
+// Lazy-loaded modal sheets and dialogs
+const CreateRantSheet = lazy(() => import("./components/rants/CreateRantSheet"));
+const OnboardingModal = lazy(() => import("./components/auth/OnboardingModal"));
 
 // Lazy-loaded pages with route-level code splitting for rapid initial load
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -53,15 +57,55 @@ const PageLoader = () => (
   </div>
 );
 
-// Helper to scroll to top on route transition
+// Helper to scroll to top on route transition or restore feed scroll position
 const ScrollToTop = ({ scrollContainerRef }) => {
   const { pathname } = useLocation();
+  const scrollPositions = useRef({});
+  const prevPathRef = useRef(pathname);
+
   useEffect(() => {
-    window.scrollTo(0, 0);
-    if (scrollContainerRef?.current) {
-      scrollContainerRef.current.scrollTo(0, 0);
+    const prevPath = prevPathRef.current;
+    if (prevPath) {
+      const currentScroll = scrollContainerRef?.current
+        ? scrollContainerRef.current.scrollTop
+        : window.scrollY;
+      scrollPositions.current[prevPath] = currentScroll;
     }
+
+    if (pathname === '/' && typeof scrollPositions.current['/'] === 'number') {
+      const targetY = scrollPositions.current['/'];
+      requestAnimationFrame(() => {
+        window.scrollTo(0, targetY);
+        if (scrollContainerRef?.current) {
+          scrollContainerRef.current.scrollTo(0, targetY);
+        }
+      });
+    } else {
+      window.scrollTo(0, 0);
+      if (scrollContainerRef?.current) {
+        scrollContainerRef.current.scrollTo(0, 0);
+      }
+    }
+
+    prevPathRef.current = pathname;
   }, [pathname, scrollContainerRef]);
+
+  // Reset scroll to 0 on explicit home refresh / logo tap
+  useEffect(() => {
+    const handleResetHomeScroll = () => {
+      scrollPositions.current['/'] = 0;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (scrollContainerRef?.current) {
+        scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+
+    window.addEventListener('rantea:refresh-home-feed', handleResetHomeScroll);
+    return () => {
+      window.removeEventListener('rantea:refresh-home-feed', handleResetHomeScroll);
+    };
+  }, [scrollContainerRef]);
+
   return null;
 };
 
@@ -118,36 +162,25 @@ const PublicAuthRoute = ({ children }) => {
 const AppContent = () => {
   const { user, isAuthenticated, isLoading, submitOnboarding } = useAuth();
   const { showToast } = useToast();
+  const queryClient = useQueryClient();
   const location = useLocation();
   const mainContentRef = useRef(null);
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editRant, setEditRant] = useState(null);
-  const [unreadCount, setUnreadCount] = useState(0);
 
-  // Fetch unread count for notifications
-  const refreshUnreadCount = useCallback(async () => {
-    if (!isAuthenticated) {
-      setUnreadCount(0);
-      return;
-    }
-    try {
+  // TanStack Query: Poll unread count every 45s with automatic caching
+  const { data: unreadData, refetch: refreshUnreadCount } = useQuery({
+    queryKey: ['unread-count'],
+    queryFn: async () => {
       const res = await notifApi.getUnreadCount();
-      if (res.success && typeof res.count === "number") {
-        setUnreadCount(res.count);
-      }
-    } catch (err) {
-      // silently handle
-    }
-  }, [isAuthenticated]);
+      return res?.success && typeof res.count === 'number' ? res.count : 0;
+    },
+    enabled: Boolean(isAuthenticated),
+    refetchInterval: 45000,
+  });
 
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    refreshUnreadCount();
-    // Poll every 45s for fresh notifications
-    const interval = setInterval(refreshUnreadCount, 45000);
-    return () => clearInterval(interval);
-  }, [isAuthenticated, refreshUnreadCount]);
+  const unreadCount = unreadData ?? 0;
 
   const handleOpenCreate = () => {
     setEditRant(null);
@@ -214,8 +247,9 @@ const AppContent = () => {
                 : "min-h-full"
             }`}
           >
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
+            <ErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
               {/* Public Auth Pages */}
               <Route
                 path="/login"
@@ -415,6 +449,7 @@ const AppContent = () => {
               />
             </Routes>
           </Suspense>
+        </ErrorBoundary>
           </div>
         </div>
 
@@ -430,30 +465,36 @@ const AppContent = () => {
       )}
 
       {/* Global Create / Edit Rant Bottom Sheet */}
-      {showChrome && (
-        <CreateRantSheet
-          isOpen={isCreateOpen}
-          onClose={() => {
-            setIsCreateOpen(false);
-            setEditRant(null);
-          }}
-          editRant={editRant}
-          onSuccess={() => {
-            refreshUnreadCount();
-          }}
-        />
+      {showChrome && isCreateOpen && (
+        <Suspense fallback={null}>
+          <CreateRantSheet
+            isOpen={isCreateOpen}
+            onClose={() => {
+              setIsCreateOpen(false);
+              setEditRant(null);
+            }}
+            editRant={editRant}
+            onSuccess={() => {
+              queryClient.invalidateQueries({ queryKey: ['posts'] });
+              queryClient.invalidateQueries({ queryKey: ['trending'] });
+              refreshUnreadCount();
+            }}
+          />
+        </Suspense>
       )}
 
       {/* Profile Onboarding Modal fallback if logged-in user hasn't selected department */}
       {isAuthenticated && user && !user.department && (
-        <OnboardingModal
-          isOpen={true}
-          user={user}
-          onComplete={async (onboardingData) => {
-            await submitOnboarding(onboardingData);
-            showToast("Profile set up! Welcome to MAKAU-TEA", "success");
-          }}
-        />
+        <Suspense fallback={null}>
+          <OnboardingModal
+            isOpen={true}
+            user={user}
+            onComplete={async (onboardingData) => {
+              await submitOnboarding(onboardingData);
+              showToast("Profile set up! Welcome to MAKAU-TEA", "success");
+            }}
+          />
+        </Suspense>
       )}
     </div>
   );
@@ -461,13 +502,15 @@ const AppContent = () => {
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <ToastProvider>
-          <AppContent />
-        </ToastProvider>
-      </AuthProvider>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <ToastProvider>
+            <AppContent />
+          </ToastProvider>
+        </AuthProvider>
+      </Router>
+    </ErrorBoundary>
   );
 }
 

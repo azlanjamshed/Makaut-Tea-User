@@ -1,9 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Flame, Megaphone, ShieldCheck, MessageSquare, Image, Sparkles, ChevronRight, Clock } from 'lucide-react';
-import * as postsApi from '../../api/posts';
-import appLogo from '../../assets/logo.png';
-import { timeAgo, formatCount, resolveImageUrl } from '../../utils/helpers';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import {
+  Flame,
+  Megaphone,
+  ShieldCheck,
+  MessageSquare,
+  Image,
+  Sparkles,
+  ChevronRight,
+  Clock,
+} from "lucide-react";
+import * as postsApi from "../../api/posts";
+import appLogo from "../../assets/logo.png";
+import { timeAgo, formatCount, resolveImageUrl } from "../../utils/helpers";
 
 const DesktopTrendingWidget = () => {
   const [hottestPost, setHottestPost] = useState(null);
@@ -17,13 +26,21 @@ const DesktopTrendingWidget = () => {
       try {
         setIsLoading(true);
         const [trendingRes, officialRes] = await Promise.all([
-          postsApi.getTrendingPosts({ timeframe: 'today', limit: 10, sortBy: 'reactions' }),
+          postsApi.getTrendingPosts({
+            timeframe: "today",
+            limit: 10,
+            sortBy: "reactions",
+          }),
           postsApi.getRecentOfficialPosts({ hours: 24, limit: 4 }),
         ]);
 
         if (isMounted) {
           // Section 1: Post with the most likes / reactions today
-          if (trendingRes?.success && trendingRes.data && trendingRes.data.length > 0) {
+          if (
+            trendingRes?.success &&
+            trendingRes.data &&
+            trendingRes.data.length > 0
+          ) {
             const sortedByLikes = [...trendingRes.data].sort((a, b) => {
               const countA = a.reactions?.total ?? a.reactionCount ?? 0;
               const countB = b.reactions?.total ?? b.reactionCount ?? 0;
@@ -57,7 +74,7 @@ const DesktopTrendingWidget = () => {
 
   return (
     <aside
-      style={{ overscrollBehavior: 'contain' }}
+      style={{ overscrollBehavior: "contain" }}
       className="hidden xl:flex flex-col w-80 2xl:w-96 h-screen sticky top-0 p-4 space-y-4 shrink-0 border-l border-[var(--border-color)] bg-[var(--bg-page)] overflow-y-auto overscroll-contain"
       onWheel={(e) => e.stopPropagation()}
     >
@@ -77,13 +94,22 @@ const DesktopTrendingWidget = () => {
         </div>
 
         {isLoading ? (
-          <div className="py-6 flex flex-col items-center justify-center text-slate-400 gap-2">
-            <div className="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
-            <span className="text-xs">Finding top post...</span>
+          <div className="p-3 rounded-2xl bg-slate-50 border border-[var(--border-color)] space-y-2.5 animate-pulse">
+            <div className="flex items-center justify-between">
+              <div className="h-3 w-28 bg-slate-200 rounded-md" />
+              <div className="h-2.5 w-12 bg-slate-200 rounded-md" />
+            </div>
+            <div className="h-3 w-full bg-slate-200 rounded-md" />
+            <div className="h-3 w-4/5 bg-slate-200 rounded-md" />
+            <div className="flex items-center gap-2 pt-1">
+              <div className="h-6 w-14 bg-slate-200 rounded-lg" />
+              <div className="h-6 w-14 bg-slate-200 rounded-lg" />
+            </div>
           </div>
         ) : !hottestPost ? (
           <div className="py-3 px-2 text-center text-xs text-slate-500 italic bg-slate-50 rounded-2xl border border-[var(--border-color)]">
-            No trending rants yet today. Be the first to react and ignite the campus buzz!
+            No trending rants yet today. Be the first to react and ignite the
+            campus buzz!
           </div>
         ) : (
           <Link
@@ -93,13 +119,17 @@ const DesktopTrendingWidget = () => {
             {/* Author & Target Row */}
             <div className="flex items-center justify-between text-[11px] text-slate-500 mb-2">
               <div className="flex items-center gap-1.5 truncate pr-2">
-                {hottestPost.isOfficial || hottestPost.isAdminPost || hottestPost.user?.role === 'admin' ? (
+                {hottestPost.isOfficial ||
+                hottestPost.isAdminPost ||
+                hottestPost.user?.role === "admin" ? (
                   <span className="font-bold text-[var(--color-primary)] truncate">
                     Head of MAKAU-TEA Affairs
                   </span>
                 ) : (
                   <span className="font-semibold text-slate-900 truncate">
-                    {hottestPost.isAnonymous ? 'Anonymous' : hottestPost.user?.name || 'Student'}
+                    {hottestPost.isAnonymous
+                      ? "Anonymous"
+                      : hottestPost.user?.name || "Student"}
                   </span>
                 )}
                 {(hottestPost.semester || hottestPost.department) && (
@@ -122,10 +152,11 @@ const DesktopTrendingWidget = () => {
             {hottestPost.image && (
               <div className="mt-2.5 rounded-xl overflow-hidden max-h-24 bg-slate-100 border border-[var(--border-color)] flex items-center justify-center">
                 <img
-                  src={resolveImageUrl(hottestPost.image)}
+                  src={resolveImageUrl(hottestPost.image, "thumb")}
                   alt="Hot post visual"
                   className="w-full h-24 object-cover group-hover:scale-105 transition-transform duration-300"
                   loading="lazy"
+                  decoding="async"
                 />
               </div>
             )}
@@ -135,7 +166,9 @@ const DesktopTrendingWidget = () => {
               <div className="flex items-center gap-2 font-bold">
                 <span className="px-2 py-0.5 rounded-lg bg-amber-100/80 border border-amber-200 text-amber-900 inline-flex items-center gap-1">
                   <Flame className="w-3 h-3 text-amber-600 fill-amber-600" />
-                  <span>{formatCount(hottestPost.reactions?.total || 0)} Likes</span>
+                  <span>
+                    {formatCount(hottestPost.reactions?.total || 0)} Likes
+                  </span>
                 </span>
                 <span className="text-slate-500 text-[10px] font-normal flex items-center gap-1">
                   <MessageSquare className="w-3 h-3 text-slate-400" />
@@ -166,13 +199,28 @@ const DesktopTrendingWidget = () => {
         </div>
 
         {isLoading ? (
-          <div className="py-6 flex flex-col items-center justify-center text-slate-400 gap-2">
-            <div className="w-5 h-5 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
-            <span className="text-xs">Checking announcements...</span>
+          <div className="space-y-2.5">
+            <div className="p-3 rounded-2xl bg-slate-50 border border-[var(--border-color)] space-y-2 animate-pulse">
+              <div className="flex items-center justify-between">
+                <div className="h-4 w-20 bg-slate-200 rounded-md" />
+                <div className="h-2.5 w-10 bg-slate-200 rounded-md" />
+              </div>
+              <div className="h-3 w-full bg-slate-200 rounded-md" />
+              <div className="h-3 w-2/3 bg-slate-200 rounded-md" />
+            </div>
+            <div className="p-3 rounded-2xl bg-slate-50 border border-[var(--border-color)] space-y-2 animate-pulse">
+              <div className="flex items-center justify-between">
+                <div className="h-4 w-20 bg-slate-200 rounded-md" />
+                <div className="h-2.5 w-10 bg-slate-200 rounded-md" />
+              </div>
+              <div className="h-3 w-full bg-slate-200 rounded-md" />
+              <div className="h-3 w-2/3 bg-slate-200 rounded-md" />
+            </div>
           </div>
         ) : recentOfficialPosts.length === 0 ? (
           <div className="py-3 px-3 text-center text-xs text-slate-500 italic bg-slate-50 rounded-2xl border border-[var(--border-color)]">
-            No official broadcasts in the last 24 hours. Campus affairs are running normally!
+            No official broadcasts in the last 24 hours. Campus affairs are
+            running normally!
           </div>
         ) : (
           <div className="space-y-2.5">
@@ -185,7 +233,7 @@ const DesktopTrendingWidget = () => {
                 {/* Meta Top: Semester + Time */}
                 <div className="flex items-center justify-between text-[10px] text-slate-500 mb-1.5 font-mono">
                   <span className="px-1.5 py-0.5 rounded bg-[var(--color-primary-light)] text-[var(--color-primary)] font-semibold border border-[var(--color-primary)]/20">
-                    {post.semester || post.department || 'All Semesters'}
+                    {post.semester || post.department || "All Semesters"}
                   </span>
                   <span>{timeAgo(post.createdAt)}</span>
                 </div>
@@ -229,15 +277,24 @@ const DesktopTrendingWidget = () => {
       <div className="bg-white border border-[var(--border-color)] rounded-3xl p-4 text-xs text-slate-500 space-y-2.5 shadow-sm">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl overflow-hidden shrink-0 border border-[var(--border-color)] bg-slate-50">
-            <img src={appLogo} alt="MAKAU-TEA" className="w-full h-full object-cover" />
+            <img
+              src={appLogo}
+              alt="MAKAU-TEA"
+              className="w-full h-full object-cover"
+            />
           </div>
           <div>
-            <span className="text-slate-900 font-bold block text-xs">MAKAU-TEA Community</span>
-            <span className="text-[10px] text-[var(--color-primary)] font-medium">Campus discourse & rants</span>
+            <span className="text-slate-900 font-bold block text-xs">
+              MAKAU-TEA Community
+            </span>
+            <span className="text-[10px] text-[var(--color-primary)] font-medium">
+              Campus discourse & rants
+            </span>
           </div>
         </div>
         <p className="leading-relaxed text-[11px] text-slate-600">
-          The verified confession & grievance board for campus students. Vent safely, connect anonymously, and share honest thoughts.
+          The verified confession & grievance board for campus students. Vent
+          safely, connect anonymously, and share honest thoughts.
         </p>
         <div className="pt-2 text-[10px] text-slate-400 border-t border-[var(--border-color)] flex justify-between font-mono">
           <span>MAKAU-TEA v1.0</span>

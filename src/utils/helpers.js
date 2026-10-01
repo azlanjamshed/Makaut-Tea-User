@@ -33,18 +33,44 @@ export const formatCount = (num) => {
 };
 
 /**
- * Ensures image URLs point to the correct CDN or local backend server
+ * Ensures image URLs point to the correct CDN or local backend server,
+ * with optional ImageKit transformations for high-performance responsive loading.
+ *
+ * Presets:
+ * - 'feed':   600-800px width (tr=w-800,q-80) for feed cards
+ * - 'detail': ~1200px width (tr=w-1200,q-85) for post detail page
+ * - 'thumb':  ~400px width (tr=w-400,q-75) for trending / thumbnails
+ * - 'avatar': 160x160 square (tr=w-160,h-160,c-maintain_ratio,q-80)
+ * - 'full':   1600px width (tr=w-1600,q-85) for lightbox inspection
  */
-export const resolveImageUrl = (url) => {
+export const resolveImageUrl = (url, preset) => {
   if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url;
+  let fullUrl = url;
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    if (url.startsWith('/uploads')) {
+      fullUrl = `${SERVER_BASE_URL}${url}`;
+    }
   }
-  if (url.startsWith('/uploads')) {
-    return `${SERVER_BASE_URL}${url}`;
+
+  if (preset && (fullUrl.includes('ik.imagekit.io') || fullUrl.includes('imagekit.io'))) {
+    if (!fullUrl.includes('tr=') && !fullUrl.includes('tr:')) {
+      const presets = {
+        feed: 'w-800,q-80',
+        detail: 'w-1200,q-85',
+        thumb: 'w-400,q-75',
+        avatar: 'w-160,h-160,c-maintain_ratio,q-80',
+        full: 'w-1600,q-85',
+      };
+      const transform = presets[preset] || preset;
+      const separator = fullUrl.includes('?') ? '&' : '?';
+      return `${fullUrl}${separator}tr=${transform}`;
+    }
   }
-  return url;
+
+  return fullUrl;
 };
+
+export const getOptimizedImageUrl = (url, preset = 'feed') => resolveImageUrl(url, preset);
 
 /**
  * Generates an accessible solid background color based on username or anonymous ID

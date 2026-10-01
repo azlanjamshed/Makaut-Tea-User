@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import MobileHeader from '../components/navigation/MobileHeader';
 import RantCard from '../components/rants/RantCard';
 import { RantCardSkeleton } from '../components/common/Skeleton';
@@ -20,9 +21,6 @@ const TrendingPage = ({ onOpenEdit }) => {
 
   const [timeframe, setTimeframe] = useState('today');
   const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [error, setError] = useState(null);
 
   // Modals
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -35,82 +33,92 @@ const TrendingPage = ({ onOpenEdit }) => {
     { id: 'popular', label: 'All-Time Popular', icon: Trophy },
   ];
 
-  const fetchTrending = useCallback(async (isManualRefresh = false) => {
-    if (isManualRefresh) setIsRefreshing(true);
-    else setIsLoading(true);
-    setError(null);
-    try {
-      // Strictly 10 posts for Today, 20 for Popular
+  const {
+    data: trendingData,
+    isLoading,
+    isRefetching: isRefreshing,
+    error: queryError,
+    refetch,
+  } = useQuery({
+    queryKey: ['trending', timeframe],
+    queryFn: async () => {
       const limit = timeframe === 'today' ? 10 : 20;
-      const res = await postsApi.getTrendingPosts({ timeframe, limit });
-      if (res?.success) {
-        setPosts(res.data || []);
-      }
-    } catch (err) {
-      setError(err.message || 'Failed to load trending rants');
-    } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
-    }
-  }, [timeframe]);
+      const res = await postsApi.getTrendingPosts({ timeframe, limit, skipCache: true });
+      return res?.data || [];
+    },
+  });
+
+  const error = queryError?.message || null;
 
   useEffect(() => {
-    fetchTrending(false);
-  }, [fetchTrending]);
-
-  const handleReact = async (targetPost, emoji) => {
-    if (!isAuthenticated) {
-      showToast('Please sign in to react to rants', 'warning');
-      return;
+    if (trendingData) {
+      setPosts(trendingData);
     }
-    const postId = targetPost.id || targetPost._id;
+  }, [trendingData]);
 
-    // Optimistic UI updates
-    setPosts((prev) =>
-      prev.map((p) => {
-        if ((p.id || p._id) === postId) {
-          const counts = { ...(p.reactions?.counts || {}) };
-          const prevUserReaction = p.reactions?.userReaction;
-          let newUserReaction = emoji;
-
-          if (prevUserReaction === emoji) {
-            counts[emoji] = Math.max((counts[emoji] || 1) - 1, 0);
-            newUserReaction = null;
-          } else {
-            if (prevUserReaction && counts[prevUserReaction]) {
-              counts[prevUserReaction] = Math.max(counts[prevUserReaction] - 1, 0);
-            }
-            counts[emoji] = (counts[emoji] || 0) + 1;
-          }
-
-          const total = Object.values(counts).reduce((a, b) => a + b, 0);
-
-          return {
-            ...p,
-            reactions: {
-              ...p.reactions,
-              counts,
-              total,
-              userReaction: newUserReaction,
-            },
-          };
-        }
-        return p;
-      })
-    );
-
-    try {
-      const res = await postsApi.reactToPost(postId, emoji);
-      if (res?.data) {
-        setPosts((prev) =>
-          prev.map((p) => ((p.id || p._id) === postId ? res.data : p))
-        );
-      }
-    } catch (err) {
-      showToast(err.message || 'Failed to save reaction', 'error');
-      fetchTrending(false);
-    }
+  const fetchTrending = (isManual) => {
+    refetch();
   };
+
+  const handleReact = useCallback(
+    async (targetPost, emoji) => {
+      if (!isAuthenticated) {
+        showToast('Please sign in to react to rants', 'warning');
+        return;
+      }
+      const postId = targetPost.id || targetPost._id;
+
+      // Optimistic UI updates
+      setPosts((prev) =>
+        prev.map((p) => {
+          if ((p.id || p._id) === postId) {
+            const counts = { ...(p.reactions?.counts || {}) };
+            const prevUserReaction = p.reactions?.userReaction;
+            let newUserReaction = emoji;
+
+            if (prevUserReaction === emoji) {
+              counts[emoji] = Math.max((counts[emoji] || 1) - 1, 0);
+              newUserReaction = null;
+            } else {
+              if (prevUserReaction && counts[prevUserReaction]) {
+                counts[prevUserReaction] = Math.max(counts[prevUserReaction] - 1, 0);
+              }
+              counts[emoji] = (counts[emoji] || 0) + 1;
+            }
+
+            const total = Object.values(counts).reduce((a, b) => a + b, 0);
+
+            return {
+              ...p,
+              reactions: {
+                ...p.reactions,
+                counts,
+                total,
+                userReaction: newUserReaction,
+              },
+            };
+          }
+          return p;
+        })
+      );
+
+      try {
+        const res = await postsApi.reactToPost(postId, emoji);
+        if (res?.data) {
+          setPosts((prev) =>
+            prev.map((p) => ((p.id || p._id) === postId ? res.data : p))
+          );
+        }
+      } catch (err) {
+        showToast(err.message || 'Failed to save reaction', 'error');
+      }
+    },
+    [isAuthenticated, showToast]
+  );
+
+  const handleEdit = useCallback((r) => onOpenEdit?.(r), [onOpenEdit]);
+  const handleDelete = useCallback((r) => setDeleteTarget(r), []);
+  const handleReport = useCallback((r) => setReportTarget(r), []);
 
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
@@ -201,20 +209,21 @@ const TrendingPage = ({ onOpenEdit }) => {
           </div>
         ) : error ? (
           <ErrorState
-            title="Could not load trending"
-            message={error}
+            title="Something went wrong"
+            message={error || "Could not load trending rants. Tap below to try again."}
             onRetry={() => fetchTrending(false)}
+            actionText="Try Again"
           />
         ) : posts.length === 0 ? (
           <EmptyState
-            emoji="🔥"
+            icon={Flame}
             title="No trending rants yet"
             message={
               timeframe === 'today'
-                ? 'No rants have gained reactions or comments in the past 24 hours. React to a rant or spill the tea to kickstart the buzz!'
+                ? 'No rants have blown up in the past 24 hours. Be the first one to spill the tea and kickstart the buzz!'
                 : 'No popular rants recorded yet. Be the first to share something memorable!'
             }
-            actionText="Explore Home Feed"
+            actionText="Spill The Tea"
             onAction={() => navigate('/')}
             className="mt-6"
           />
@@ -263,9 +272,9 @@ const TrendingPage = ({ onOpenEdit }) => {
                   <RantCard
                     rant={rant}
                     onReact={handleReact}
-                    onEdit={(r) => onOpenEdit?.(r)}
-                    onDelete={(r) => setDeleteTarget(r)}
-                    onReport={(r) => setReportTarget(r)}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onReport={handleReport}
                   />
                 </div>
               );

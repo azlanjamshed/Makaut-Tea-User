@@ -113,6 +113,6 @@ export const searchPosts = async ({ q = '', department = '', username = '', page
   return api.get('/posts/search', { params });
 };
 
-export const getPostsByUser = async (userId) => {
-  return api.get(`/posts/user/${userId}`);
+export const getPostsByUser = async (userId, params) => {
+  return api.get(`/posts/user/${userId}`, { params });
 };

@@ -16,6 +16,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import * as postsApi from '../api/posts';
 import * as usersApi from '../api/users';
+import { useDebounce } from '../hooks/useDebounce';
 import {
   SlidersHorizontal,
   User,
@@ -33,6 +34,7 @@ const SearchPage = ({ onOpenEdit }) => {
   const { showToast } = useToast();
 
   const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 400);
   const [username, setUsername] = useState('');
   const [department, setDepartment] = useState('All');
   const [sortBy, setSortBy] = useState('latest');
@@ -57,7 +59,7 @@ const SearchPage = ({ onOpenEdit }) => {
     setHasSearched(true);
 
     try {
-      const qTrimmed = query.trim();
+      const qTrimmed = debouncedQuery.trim();
       const [postsRes, usersRes] = await Promise.all([
         postsApi.searchPosts({
           q: qTrimmed,
@@ -90,12 +92,12 @@ const SearchPage = ({ onOpenEdit }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [query, username, department, sortBy]);
+  }, [debouncedQuery, username, department, sortBy]);
 
-  // Initial search on mount
+  // Run search on mount and automatically whenever debounced query or filters change
   useEffect(() => {
     handleSearch();
-  }, []);
+  }, [handleSearch]);
 
   const handleReact = async (targetPost, emoji) => {
     if (!isAuthenticated) {
@@ -141,10 +143,7 @@ const SearchPage = ({ onOpenEdit }) => {
           <SearchBar
             value={query}
             onChange={setQuery}
-            onClear={() => {
-              setQuery('');
-              handleSearch();
-            }}
+            onClear={() => setQuery('')}
             onSubmit={handleSearch}
             placeholder={
               searchTab === 'accounts'
@@ -276,10 +275,7 @@ const SearchPage = ({ onOpenEdit }) => {
             {/* Department Chips */}
             <FilterBar
               selectedDepartment={department}
-              onSelectDepartment={(dept) => {
-                setDepartment(dept);
-                setTimeout(handleSearch, 50);
-              }}
+              onSelectDepartment={(dept) => setDepartment(dept)}
             />
 
             {/* Search Results */}
@@ -290,13 +286,14 @@ const SearchPage = ({ onOpenEdit }) => {
               </div>
             ) : error ? (
               <ErrorState
-                title="Search error"
-                message={error}
+                title="Something went wrong"
+                message={error || "Could not complete search. Tap below to try again."}
                 onRetry={handleSearch}
+                actionText="Try Again"
               />
             ) : posts.length === 0 && hasSearched ? (
               <EmptyState
-                emoji="🔍"
+                icon={Search}
                 title="No rants found"
                 message="Try searching for a different keyword, professor name, or department."
                 actionText="Clear All Filters"
@@ -304,7 +301,6 @@ const SearchPage = ({ onOpenEdit }) => {
                   setQuery('');
                   setUsername('');
                   setDepartment('All');
-                  setTimeout(handleSearch, 50);
                 }}
                 className="mt-6"
               />
@@ -348,7 +344,7 @@ const SearchPage = ({ onOpenEdit }) => {
               </div>
             ) : accounts.length === 0 ? (
               <EmptyState
-                emoji="👤"
+                icon={Users}
                 title="No accounts found"
                 message={
                   query.trim()

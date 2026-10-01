@@ -9,6 +9,7 @@ import ConfirmationModal from '../components/common/ConfirmationModal';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import * as postsApi from '../api/posts';
+import { FileText } from 'lucide-react';
 
 const MyRantsPage = ({ onOpenCreate, onOpenEdit }) => {
   const navigate = useNavigate();
@@ -75,16 +76,17 @@ const MyRantsPage = ({ onOpenCreate, onOpenEdit }) => {
           </div>
         ) : error ? (
           <ErrorState
-            title="Could not load your rants"
-            message={error}
+            title="Something went wrong"
+            message={error || "Could not load your rants. Tap below to try again."}
             onRetry={fetchMyRants}
+            actionText="Try Again"
           />
         ) : posts.length === 0 ? (
           <EmptyState
-            emoji="✍️"
-            title="You haven't posted any rants yet"
-            message="Got a campus grievance or confession? Spill the tea anonymously or with your profile."
-            actionText="Create Your First Rant"
+            icon={FileText}
+            title="No rants yet"
+            message="Got campus tea or confessions? Be the first one to spill the tea."
+            actionText="Spill The Tea"
             onAction={onOpenCreate}
             className="mt-8"
           />

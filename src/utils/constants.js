@@ -45,6 +45,8 @@ export const REACTIONS = [
   { emoji: "💀", name: "dead", label: "Dead" },
 ];
 
+export const ALLOWED_REACTIONS = ["❤️", "👎", "💀"];
+
 // Single URL configuration for seamless deployment
 const DEFAULT_PROD_API_URL = "https://makaut-tea-server.onrender.com/api";
 const rawApiUrl =

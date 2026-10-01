@@ -16,6 +16,7 @@ import {
   Calendar,
   Layers,
   Sparkles,
+  Inbox,
 } from "lucide-react";
 import MobileHeader from "../components/navigation/MobileHeader";
 import Button from "../components/common/Button";
@@ -397,7 +398,7 @@ const AnnouncePage = () => {
               </div>
             ) : myRequests.length === 0 ? (
               <EmptyState
-                emoji="📭"
+                icon={Inbox}
                 title="No announcement proposals yet"
                 message="You haven't submitted any campus announcement requests yet. Switch to 'Submit Proposal' to create one."
                 actionLabel="Create Proposal"

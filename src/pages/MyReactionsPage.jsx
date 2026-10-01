@@ -9,6 +9,7 @@ import ReportSheet from '../components/reports/ReportSheet';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import * as postsApi from '../api/posts';
+import { Heart } from 'lucide-react';
 
 const MyReactionsPage = () => {
   const navigate = useNavigate();
@@ -75,14 +76,15 @@ const MyReactionsPage = () => {
           </div>
         ) : error ? (
           <ErrorState
-            title="Could not load reacted rants"
-            message={error}
+            title="Something went wrong"
+            message={error || "Could not load reacted rants. Tap below to try again."}
             onRetry={fetchReactedPosts}
+            actionText="Try Again"
           />
         ) : posts.length === 0 ? (
           <EmptyState
-            emoji="❤️"
-            title="You haven't reacted to any rants yet"
+            icon={Heart}
+            title="No reacted rants yet"
             message="Browse the home feed or trending rants and react to save posts to your activity."
             actionText="Explore Feed"
             onAction={() => navigate('/')}

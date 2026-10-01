@@ -18,7 +18,7 @@ export default defineConfig({
             if (id.includes('lucide-react')) {
               return 'vendor-icons';
             }
-            if (id.includes('axios')) {
+            if (id.includes('axios') || id.includes('@tanstack/react-query')) {
               return 'vendor-network';
             }
           }

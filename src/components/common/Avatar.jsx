@@ -19,7 +19,7 @@ const Avatar = ({
     xl: 'w-20 h-20 text-2xl font-bold',
   };
 
-  const imageSrc = !isAnonymous && src && !imgError ? resolveImageUrl(src) : null;
+  const imageSrc = !isAnonymous && src && !imgError ? resolveImageUrl(src, 'avatar') : null;
   const firstLetter = getInitials(name);
   const bgColor = getAvatarBg(name || 'user');
 

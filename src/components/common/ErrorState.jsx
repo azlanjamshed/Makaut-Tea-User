@@ -5,30 +5,46 @@ import Button from './Button';
 const ErrorState = ({
   title = 'Something went wrong',
   message = 'We could not load the content. Please check your connection and try again.',
+  icon: IconProp,
   onRetry,
+  actionText = 'Try Again',
   className = '',
 }) => {
   return (
     <div
-      className={`flex flex-col items-center justify-center text-center p-8 rounded-3xl bg-rose-950/20 border border-rose-500/20 ${className}`}
+      className={`flex flex-col items-center justify-center text-center p-8 sm:p-12 rounded-3xl bg-white border border-dashed border-rose-200 shadow-xs transition-all ${className}`}
     >
-      <div className="w-12 h-12 rounded-2xl bg-rose-900/40 text-rose-400 flex items-center justify-center mb-3 border border-rose-500/30">
-        <AlertCircle className="w-6 h-6" />
+      <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-500 mb-4 shadow-xs">
+        {IconProp ? (
+          typeof IconProp === 'function' ? (
+            <IconProp className="w-7 h-7 stroke-[1.75]" />
+          ) : (
+            IconProp
+          )
+        ) : (
+          <AlertCircle className="w-7 h-7 stroke-[1.75]" />
+        )}
       </div>
-      <h3 className="text-base font-bold text-rose-200 mb-1 font-display">
+
+      <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1.5 font-display tracking-tight">
         {title}
       </h3>
-      <p className="text-xs sm:text-sm text-slate-400 max-w-xs mb-5">
-        {message}
-      </p>
+
+      {message && (
+        <p className="text-sm text-slate-500 max-w-sm mb-6 leading-relaxed">
+          {message}
+        </p>
+      )}
+
       {onRetry && (
         <Button
           onClick={onRetry}
-          variant="secondary"
+          variant="primary"
           size="sm"
           icon={RotateCcw}
+          className="shadow-xs font-semibold px-5"
         >
-          Try Again
+          {actionText}
         </Button>
       )}
     </div>

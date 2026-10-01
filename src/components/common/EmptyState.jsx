@@ -1,76 +1,89 @@
 import React from 'react';
 import {
+  MessageSquareDashed,
   Inbox,
   Flame,
   MessageSquare,
   Search,
-  Bell,
+  BellOff,
   User,
   Heart,
   FileText,
-  AlertTriangle,
-  Users,
-  Lightbulb,
-  Ghost,
 } from 'lucide-react';
 import Button from './Button';
 
-const EMOJI_ICON_MAP = {
-  '📭': Inbox,
-  '💤': Ghost,
+// Safe mapping from emoji/key to polished Lucide icons
+const ICON_MAP = {
+  '👀': MessageSquareDashed,
+  '💤': MessageSquareDashed,
   '🔥': Flame,
   '💬': MessageSquare,
   '🔍': Search,
-  '🔔': Bell,
+  '🔔': BellOff,
   '👤': User,
-  '👥': Users,
   '❤️': Heart,
   '📝': FileText,
   '✍️': FileText,
-  '🚨': AlertTriangle,
-  '💡': Lightbulb,
+  '📭': Inbox,
 };
 
 const EmptyState = ({
-  icon,
+  icon: IconProp,
   emoji,
   title,
   message,
   actionText,
+  actionLabel,
   onAction,
+  actionIcon,
   className = '',
 }) => {
-  const MappedIcon = emoji && EMOJI_ICON_MAP[emoji] ? EMOJI_ICON_MAP[emoji] : null;
+  const buttonText = actionText || actionLabel;
+
+  // Resolve icon component/element
+  let renderedIcon = null;
+  if (IconProp) {
+    if (typeof IconProp === 'function') {
+      renderedIcon = <IconProp className="w-7 h-7 stroke-[1.75]" />;
+    } else {
+      renderedIcon = IconProp;
+    }
+  } else if (emoji && ICON_MAP[emoji]) {
+    const Mapped = ICON_MAP[emoji];
+    renderedIcon = <Mapped className="w-7 h-7 stroke-[1.75]" />;
+  } else {
+    renderedIcon = <MessageSquareDashed className="w-7 h-7 stroke-[1.75]" />;
+  }
 
   return (
     <div
-      className={`flex flex-col items-center justify-center text-center p-8 sm:p-12 rounded-3xl bg-white border border-dashed border-[var(--border-color)] shadow-sm ${className}`}
+      className={`flex flex-col items-center justify-center text-center p-8 sm:p-12 rounded-3xl bg-white border border-dashed border-[var(--border-color)] shadow-xs transition-all ${className}`}
     >
-      <div className="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center text-[var(--color-primary)] mb-4 border border-[var(--border-color)]">
-        {icon ? (
-          icon
-        ) : MappedIcon ? (
-          <MappedIcon className="w-7 h-7 stroke-[1.75]" />
-        ) : (
-          <MessageSquare className="w-7 h-7 stroke-[1.75]" />
-        )}
+      <div className="w-16 h-16 rounded-2xl bg-purple-50 text-[var(--color-primary)] flex items-center justify-center mb-4 border border-purple-100 shadow-xs">
+        {renderedIcon}
       </div>
 
       {title && (
-        <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1 font-display">
+        <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1.5 font-display tracking-tight">
           {title}
         </h3>
       )}
 
       {message && (
-        <p className="text-sm text-slate-500 max-w-xs mb-5 leading-relaxed">
+        <p className="text-sm text-slate-500 max-w-sm mb-5 leading-relaxed">
           {message}
         </p>
       )}
 
-      {actionText && onAction && (
-        <Button onClick={onAction} size="sm" variant="primary">
-          {actionText}
+      {buttonText && onAction && (
+        <Button
+          onClick={onAction}
+          size="sm"
+          variant="primary"
+          className="shadow-xs font-semibold px-5"
+        >
+          {actionIcon && <span className="mr-1.5">{actionIcon}</span>}
+          {buttonText}
         </Button>
       )}
     </div>

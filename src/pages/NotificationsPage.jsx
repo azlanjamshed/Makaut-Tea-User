@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import MobileHeader from '../components/navigation/MobileHeader';
 import NotificationItem from '../components/notifications/NotificationItem';
 import { NotificationSkeleton } from '../components/common/Skeleton';
@@ -10,46 +11,49 @@ import Button from '../components/common/Button';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import * as notifApi from '../api/notifications';
-import { CheckCheck, Trash2, Filter } from 'lucide-react';
+import { CheckCheck, Trash2, Filter, BellOff } from 'lucide-react';
 
 const NotificationsPage = ({ onRefreshUnreadCount }) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { isAuthenticated } = useAuth();
   const { showToast } = useToast();
 
   const [notifications, setNotifications] = useState([]);
   const [unreadOnly, setUnreadOnly] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
 
-  const fetchNotifications = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const res = await notifApi.getNotifications({ unreadOnly, limit: 40 });
-      if (res.success) {
-        setNotifications(res.data || []);
-        setUnreadCount(res.unreadCount || 0);
-        onRefreshUnreadCount?.();
-      }
-    } catch (err) {
-      setError(err.message || 'Failed to load notifications');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [unreadOnly, onRefreshUnreadCount]);
+  const {
+    data: notifResponse,
+    isLoading,
+    error: queryError,
+    refetch,
+  } = useQuery({
+    queryKey: ['notifications', unreadOnly],
+    queryFn: async () => {
+      return notifApi.getNotifications({ unreadOnly, limit: 40 });
+    },
+    enabled: isAuthenticated,
+  });
+
+  const error = queryError?.message || null;
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login');
-      return;
     }
-    fetchNotifications();
-  }, [isAuthenticated, fetchNotifications, navigate]);
+  }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    if (notifResponse?.success) {
+      setNotifications(notifResponse.data || []);
+      setUnreadCount(notifResponse.unreadCount || 0);
+      onRefreshUnreadCount?.();
+    }
+  }, [notifResponse, onRefreshUnreadCount]);
 
   const handleMarkAsRead = async (id) => {
     try {
@@ -69,6 +73,8 @@ const NotificationsPage = ({ onRefreshUnreadCount }) => {
       await notifApi.markAllAsRead();
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       setUnreadCount(0);
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['unread-count'] });
       onRefreshUnreadCount?.();
       showToast('All marked as read', 'success');
     } catch (err) {
@@ -80,6 +86,7 @@ const NotificationsPage = ({ onRefreshUnreadCount }) => {
     try {
       await notifApi.deleteNotification(id);
       setNotifications((prev) => prev.filter((n) => (n.id || n._id) !== id));
+      queryClient.invalidateQueries({ queryKey: ['unread-count'] });
       onRefreshUnreadCount?.();
     } catch (err) {
       showToast(err.message || 'Failed to delete notification', 'error');
@@ -92,6 +99,8 @@ const NotificationsPage = ({ onRefreshUnreadCount }) => {
       await notifApi.clearAllNotifications();
       setNotifications([]);
       setUnreadCount(0);
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['unread-count'] });
       onRefreshUnreadCount?.();
       showToast('All notifications cleared', 'success');
       setShowClearConfirm(false);
@@ -173,13 +182,14 @@ const NotificationsPage = ({ onRefreshUnreadCount }) => {
           </div>
         ) : error ? (
           <ErrorState
-            title="Could not load notifications"
-            message={error}
+            title="Something went wrong"
+            message={error || "Could not load notifications. Tap below to try again."}
             onRetry={fetchNotifications}
+            actionText="Try Again"
           />
         ) : notifications.length === 0 ? (
           <EmptyState
-            emoji="🔔"
+            icon={BellOff}
             title="You're all caught up"
             message={
               unreadOnly

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import MobileHeader from '../components/navigation/MobileHeader';
 import RantCard from '../components/rants/RantCard';
 import CommentCard from '../components/comments/CommentCard';
@@ -18,15 +19,13 @@ import { MessageSquare } from 'lucide-react';
 const RantDetailsPage = ({ onOpenEdit }) => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { user, isAuthenticated } = useAuth();
   const { showToast } = useToast();
 
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
-  const [isLoadingPost, setIsLoadingPost] = useState(true);
-  const [isLoadingComments, setIsLoadingComments] = useState(true);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
-  const [error, setError] = useState(null);
 
   // Modals
   const [deleteRantTarget, setDeleteRantTarget] = useState(null);
@@ -34,39 +33,47 @@ const RantDetailsPage = ({ onOpenEdit }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [reportTarget, setReportTarget] = useState(null);
 
-  const fetchPostDetails = useCallback(async () => {
-    setIsLoadingPost(true);
-    setError(null);
-    try {
-      const res = await postsApi.getPostById(id);
-      if (res.success && res.data) {
-        setPost(res.data);
-      }
-    } catch (err) {
-      setError(err.message || 'Post not found');
-    } finally {
-      setIsLoadingPost(false);
-    }
-  }, [id]);
+  // TanStack Query for Post
+  const {
+    data: postData,
+    isLoading: isLoadingPost,
+    error: postQueryError,
+    refetch: fetchPostDetails,
+  } = useQuery({
+    queryKey: ['post', id],
+    queryFn: async () => {
+      const res = await postsApi.getPostById(id, true);
+      return res?.data || null;
+    },
+    enabled: Boolean(id),
+  });
 
-  const fetchComments = useCallback(async () => {
-    setIsLoadingComments(true);
-    try {
+  const error = postQueryError?.message || null;
+
+  // TanStack Query for Comments
+  const {
+    data: commentsData,
+    isLoading: isLoadingComments,
+  } = useQuery({
+    queryKey: ['comments', id],
+    queryFn: async () => {
       const res = await commentsApi.getComments(id);
-      if (res.success) {
-        setComments(res.data || []);
-      }
-    } catch (err) {
-      // silently handle comment fetch fail
-    } finally {
-      setIsLoadingComments(false);
-    }
-  }, [id]);
+      return res?.data || [];
+    },
+    enabled: Boolean(id),
+  });
 
   useEffect(() => {
-    fetchPostDetails();
-    fetchComments();
-  }, [fetchPostDetails, fetchComments]);
+    if (postData) {
+      setPost(postData);
+    }
+  }, [postData]);
+
+  useEffect(() => {
+    if (commentsData) {
+      setComments(commentsData);
+    }
+  }, [commentsData]);
 
   const handleReact = async (targetPost, emoji) => {
     if (!isAuthenticated) {
@@ -93,6 +100,9 @@ const RantDetailsPage = ({ onOpenEdit }) => {
         setPost((prev) =>
           prev ? { ...prev, commentsCount: (prev.commentsCount || 0) + 1 } : prev
         );
+        queryClient.invalidateQueries({ queryKey: ['comments', id] });
+        queryClient.invalidateQueries({ queryKey: ['post', id] });
+        queryClient.invalidateQueries({ queryKey: ['posts'] });
         showToast('Comment added!', 'success');
       }
     } catch (err) {
@@ -107,6 +117,7 @@ const RantDetailsPage = ({ onOpenEdit }) => {
     setIsDeleting(true);
     try {
       await postsApi.deletePost(deleteRantTarget.id || deleteRantTarget._id);
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
       showToast('Rant deleted successfully', 'success');
       navigate('/', { replace: true });
     } catch (err) {
@@ -127,6 +138,9 @@ const RantDetailsPage = ({ onOpenEdit }) => {
       setPost((prev) =>
         prev ? { ...prev, commentsCount: Math.max((prev.commentsCount || 1) - 1, 0) } : prev
       );
+      queryClient.invalidateQueries({ queryKey: ['comments', id] });
+      queryClient.invalidateQueries({ queryKey: ['post', id] });
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
       showToast('Comment deleted', 'success');
     } catch (err) {
       showToast(err.message || 'Failed to delete comment', 'error');
@@ -180,9 +194,9 @@ const RantDetailsPage = ({ onOpenEdit }) => {
                   </div>
                 ) : comments.length === 0 ? (
                   <EmptyState
-                    emoji="💬"
+                    icon={MessageSquare}
                     title="No comments yet"
-                    message="Be the first one to share what you think."
+                    message="Be the first one to drop your thoughts and spill the tea."
                     className="my-3 py-6"
                   />
                 ) : (
