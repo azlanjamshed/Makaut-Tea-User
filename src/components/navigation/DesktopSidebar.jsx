@@ -38,11 +38,11 @@ const DesktopSidebar = ({ onOpenCreate, unreadCount = 0 }) => {
       icon: Megaphone,
       requiresAuth: true,
     },
-    {
-      to: "/help",
-      label: "Help & Support",
-      icon: HelpCircle,
-    },
+    // {
+    //   to: "/help",
+    //   label: "Help & Support",
+    //   icon: HelpCircle,
+    // },
     {
       to: isAuthenticated ? "/profile" : "/login",
       label: isAuthenticated ? "My Profile" : "Sign In",

@@ -1,31 +1,41 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import MobileHeader from '../components/navigation/MobileHeader';
-import SearchBar from '../components/rants/SearchBar';
-import FilterBar from '../components/rants/FilterBar';
-import RantCard from '../components/rants/RantCard';
-import { RantCardSkeleton } from '../components/common/Skeleton';
-import EmptyState from '../components/common/EmptyState';
-import ErrorState from '../components/common/ErrorState';
-import Button from '../components/common/Button';
-import MobileAdminBroadcast from '../components/rants/MobileAdminBroadcast';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import MobileHeader from "../components/navigation/MobileHeader";
+import SearchBar from "../components/rants/SearchBar";
+import FilterBar from "../components/rants/FilterBar";
+import RantCard from "../components/rants/RantCard";
+import { RantCardSkeleton } from "../components/common/Skeleton";
+import EmptyState from "../components/common/EmptyState";
+import ErrorState from "../components/common/ErrorState";
+import Button from "../components/common/Button";
+import MobileAdminBroadcast from "../components/rants/MobileAdminBroadcast";
 
 // Lazy-loaded on-demand modal components
-const ConfirmationModal = React.lazy(() => import('../components/common/ConfirmationModal'));
-const ReportSheet = React.lazy(() => import('../components/reports/ReportSheet'));
-import { useAuth } from '../context/AuthContext';
-import { useToast } from '../context/ToastContext';
-import * as postsApi from '../api/posts';
-import { Sparkles, RefreshCw, MessageSquareDashed, Search } from 'lucide-react';
-import { useDebounce } from '../hooks/useDebounce';
+const ConfirmationModal = React.lazy(
+  () => import("../components/common/ConfirmationModal"),
+);
+const ReportSheet = React.lazy(
+  () => import("../components/reports/ReportSheet"),
+);
+import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
+import * as postsApi from "../api/posts";
+import { Sparkles, RefreshCw, MessageSquareDashed, Search } from "lucide-react";
+import { useDebounce } from "../hooks/useDebounce";
 
 const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
   const { user, isAuthenticated } = useAuth();
   const { showToast } = useToast();
   const queryClient = useQueryClient();
 
-  const [selectedDepartment, setSelectedDepartment] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDepartment, setSelectedDepartment] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 400);
   const observerTarget = useRef(null);
 
@@ -44,7 +54,7 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
     error: queryError,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ['posts', selectedDepartment, debouncedSearchQuery],
+    queryKey: ["posts", selectedDepartment, debouncedSearchQuery],
     queryFn: async ({ pageParam = 1 }) => {
       const res = await postsApi.getPosts({
         page: pageParam,
@@ -63,7 +73,7 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
     },
     initialPageParam: 1,
     staleTime: 1000 * 60 * 3, // 3 minutes fresh cache: navigating away & back uses cached posts with 0 network calls
-    gcTime: 1000 * 60 * 15,   // Keep cache in memory for 15 minutes
+    gcTime: 1000 * 60 * 15, // Keep cache in memory for 15 minutes
   });
 
   // Cached feed: Instant synchronous read from TanStack Query cache on mount & return
@@ -75,7 +85,7 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
   const updateQueryCachePost = useCallback(
     (postId, updater) => {
       queryClient.setQueryData(
-        ['posts', selectedDepartment, debouncedSearchQuery],
+        ["posts", selectedDepartment, debouncedSearchQuery],
         (oldData) => {
           if (!oldData || !oldData.pages) return oldData;
           return {
@@ -84,15 +94,15 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
               ...page,
               data: Array.isArray(page.data)
                 ? page.data.map((p) =>
-                    (p.id || p._id) === postId ? updater(p) : p
+                    (p.id || p._id) === postId ? updater(p) : p,
                   )
                 : page.data,
             })),
           };
-        }
+        },
       );
     },
-    [queryClient, selectedDepartment, debouncedSearchQuery]
+    [queryClient, selectedDepartment, debouncedSearchQuery],
   );
 
   const error = queryError?.message || null;
@@ -102,14 +112,14 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
   // Listen for logo or home click to refresh recent rants
   useEffect(() => {
     const handleHomeRefresh = () => {
-      setSelectedDepartment('All');
-      setSearchQuery('');
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      setSelectedDepartment("All");
+      setSearchQuery("");
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     };
 
-    window.addEventListener('rantea:refresh-home-feed', handleHomeRefresh);
+    window.addEventListener("rantea:refresh-home-feed", handleHomeRefresh);
     return () => {
-      window.removeEventListener('rantea:refresh-home-feed', handleHomeRefresh);
+      window.removeEventListener("rantea:refresh-home-feed", handleHomeRefresh);
     };
   }, [queryClient]);
 
@@ -123,7 +133,7 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
           fetchNextPage();
         }
       },
-      { threshold: 0.1, rootMargin: '250px' }
+      { threshold: 0.1, rootMargin: "250px" },
     );
 
     const currentTarget = observerTarget.current;
@@ -141,7 +151,7 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
   const handleReact = useCallback(
     async (targetPost, emoji) => {
       if (!isAuthenticated) {
-        showToast('Please sign in to react to rants', 'warning');
+        showToast("Please sign in to react to rants", "warning");
         return;
       }
 
@@ -158,7 +168,10 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
           newUserReaction = null;
         } else {
           if (prevUserReaction && counts[prevUserReaction]) {
-            counts[prevUserReaction] = Math.max(counts[prevUserReaction] - 1, 0);
+            counts[prevUserReaction] = Math.max(
+              counts[prevUserReaction] - 1,
+              0,
+            );
           }
           counts[emoji] = (counts[emoji] || 0) + 1;
         }
@@ -183,10 +196,10 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
           updateQueryCachePost(postId, () => res.data);
         }
       } catch (err) {
-        showToast(err.message || 'Failed to save reaction', 'error');
+        showToast(err.message || "Failed to save reaction", "error");
       }
     },
-    [isAuthenticated, showToast, updateQueryCachePost]
+    [isAuthenticated, showToast, updateQueryCachePost],
   );
 
   const handleEdit = useCallback((r) => onOpenEdit?.(r), [onOpenEdit]);
@@ -201,7 +214,7 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
     try {
       await postsApi.deletePost(postId);
       queryClient.setQueryData(
-        ['posts', selectedDepartment, debouncedSearchQuery],
+        ["posts", selectedDepartment, debouncedSearchQuery],
         (oldData) => {
           if (!oldData || !oldData.pages) return oldData;
           return {
@@ -213,13 +226,13 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
                 : page.data,
             })),
           };
-        }
+        },
       );
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
-      showToast('Rant deleted successfully', 'success');
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      showToast("Rant deleted successfully", "success");
       setDeleteTarget(null);
     } catch (err) {
-      showToast(err.message || 'Failed to delete rant', 'error');
+      showToast(err.message || "Failed to delete rant", "error");
     } finally {
       setIsDeleting(false);
     }
@@ -235,7 +248,7 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
         <SearchBar
           value={searchQuery}
           onChange={setSearchQuery}
-          onClear={() => setSearchQuery('')}
+          onClear={() => setSearchQuery("")}
           onSubmit={() => refetch()}
           placeholder="Search rants or keywords..."
         />
@@ -261,7 +274,10 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
         ) : error ? (
           <ErrorState
             title="Something went wrong"
-            message={error || "Could not load the rants feed. Check your internet connection and try again."}
+            message={
+              error ||
+              "Could not load the rants feed. Check your internet connection and try again."
+            }
             onRetry={() => refetch()}
             actionText="Try Again"
           />
@@ -271,19 +287,19 @@ const HomePage = ({ onOpenCreate, onOpenEdit, unreadCount }) => {
             title={
               searchQuery
                 ? `No rants found for "${searchQuery}"`
-                : selectedDepartment !== 'All'
-                ? `No rants in ${selectedDepartment} yet`
-                : 'No rants yet'
+                : selectedDepartment !== "All"
+                  ? `No rants in ${selectedDepartment} yet`
+                  : "No rants yet"
             }
             message={
               searchQuery
-                ? 'Try searching with different keywords or clear the search to see all posts.'
-                : selectedDepartment !== 'All'
-                ? `Be the first one to spill the tea in ${selectedDepartment}.`
-                : 'Be the first one to spill the tea.'
+                ? "Try searching with different keywords or clear the search to see all posts."
+                : selectedDepartment !== "All"
+                  ? `Be the first one to spill the tea in ${selectedDepartment}.`
+                  : "Be the first one to spill the tea."
             }
-            actionText={searchQuery ? 'Clear Search' : 'Spill The Tea'}
-            onAction={searchQuery ? () => setSearchQuery('') : onOpenCreate}
+            actionText={searchQuery ? "Clear Search" : "Spill The Tea"}
+            onAction={searchQuery ? () => setSearchQuery("") : onOpenCreate}
             className="mt-6"
           />
         ) : (
