@@ -1,5 +1,5 @@
-import React from 'react';
-import MobileHeader from '../../components/navigation/MobileHeader';
+import React from "react";
+import MobileHeader from "../../components/navigation/MobileHeader";
 import {
   Scroll,
   Sparkles,
@@ -14,22 +14,24 @@ import {
   Bot,
   GraduationCap,
   Lightbulb,
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 const RULES = [
   {
     num: 1,
-    title: 'Rant freely',
+    title: "Rant freely",
     icon: MessageSquare,
-    border: 'border-amber-200',
+    border: "border-amber-200",
     body: (
       <div className="space-y-1.5 text-slate-600">
         <p>College is stressful.</p>
         <p>Exams are stressful.</p>
         <p>Attendance is stressful.</p>
         <p>Sometimes your 8 AM class is personally attacking you.</p>
-        <p className="font-semibold text-amber-800 pt-1">You're allowed to talk about it.</p>
+        <p className="font-semibold text-amber-800 pt-1">
+          You're allowed to talk about it.
+        </p>
       </div>
     ),
   },
@@ -37,7 +39,7 @@ const RULES = [
     num: 2,
     title: "Don't be a menace",
     icon: ShieldAlert,
-    border: 'border-rose-200',
+    border: "border-rose-200",
     body: (
       <div className="space-y-1.5 text-slate-600">
         <p>Rant about situations, experiences and college problems.</p>
@@ -49,12 +51,14 @@ const RULES = [
   },
   {
     num: 3,
-    title: 'Privacy exists',
+    title: "Privacy exists",
     icon: EyeOff,
-    border: 'border-sky-200',
+    border: "border-sky-200",
     body: (
       <div className="space-y-1.5 text-slate-600">
-        <p className="font-medium text-slate-800 mb-1">Never share or expose:</p>
+        <p className="font-medium text-slate-800 mb-1">
+          Never share or expose:
+        </p>
         <ul className="list-disc list-inside space-y-1 text-slate-600 text-xs sm:text-sm pl-1">
           <li>Phone numbers</li>
           <li>Hostel room addresses or private locations</li>
@@ -69,10 +73,11 @@ const RULES = [
     num: 4,
     title: "Anonymous doesn't mean anything goes",
     icon: VenetianMask,
-    border: 'border-purple-200',
+    border: "border-purple-200",
     body: (
       <p className="text-slate-600 leading-relaxed">
-        Your identity may be hidden publicly, but anonymity isn't a license to abuse, defame, or intimidate people.
+        Your identity may be hidden publicly, but anonymity isn't a license to
+        abuse, defame, or intimidate people.
       </p>
     ),
   },
@@ -80,10 +85,13 @@ const RULES = [
     num: 5,
     title: "The report button isn't a dislike button",
     icon: Flag,
-    border: 'border-red-200',
+    border: "border-red-200",
     body: (
       <div className="space-y-1.5 text-slate-600">
-        <p>Don't report something simply because you disagree with it or dislike the author's viewpoint.</p>
+        <p>
+          Don't report something simply because you disagree with it or dislike
+          the author's viewpoint.
+        </p>
         <p className="font-mono text-xs font-bold text-red-700 bg-red-50 p-2.5 rounded-xl border border-red-200 mt-1">
           "I don't like this opinion" ≠ "This violates the rules."
         </p>
@@ -92,12 +100,14 @@ const RULES = [
   },
   {
     num: 6,
-    title: 'No spam',
+    title: "No spam",
     icon: Bot,
-    border: 'border-emerald-200',
+    border: "border-emerald-200",
     body: (
       <div className="space-y-1.5 text-slate-600">
-        <p className="font-medium text-slate-800">Don't flood the platform with:</p>
+        <p className="font-medium text-slate-800">
+          Don't flood the platform with:
+        </p>
         <ul className="list-disc list-inside space-y-1 text-slate-600 text-xs sm:text-sm pl-1">
           <li>Repeated or duplicate rants</li>
           <li>Promotional content, ads or referral links</li>
@@ -109,27 +119,33 @@ const RULES = [
   },
   {
     num: 7,
-    title: 'Keep it college-related',
+    title: "Keep it college-related",
     icon: GraduationCap,
-    border: 'border-cyan-200',
+    border: "border-cyan-200",
     body: (
       <div className="space-y-1.5 text-slate-600">
-        <p>This is a place specifically built for our campus and college community.</p>
+        <p>
+          This is a place specifically built for our campus and college
+          community.
+        </p>
         <p className="font-semibold text-cyan-800 pt-1">
-          Keep the majority of your content relevant to student life, academics, hostel, campus buzz and campus culture.
+          Keep the majority of your content relevant to student life, academics,
+          hostel, campus buzz and campus culture.
         </p>
       </div>
     ),
   },
   {
     num: 8,
-    title: 'Common sense wins',
+    title: "Common sense wins",
     icon: Lightbulb,
-    border: 'border-indigo-200',
+    border: "border-indigo-200",
     body: (
       <div className="space-y-1 text-slate-600">
         <p>If you have to ask:</p>
-        <p className="italic text-slate-800 font-serif">"Is this probably a bad idea?"</p>
+        <p className="italic text-slate-800 font-serif">
+          "Is this probably a bad idea?"
+        </p>
         <p className="font-bold text-indigo-700 pt-1">It probably is.</p>
       </div>
     ),
@@ -153,13 +169,14 @@ const HouseRulesPage = () => {
                 The House Rules
               </h1>
               <p className="text-xs sm:text-sm text-slate-500">
-                The unwritten (now written) code of conduct for Rantea.
+                The unwritten (now written) code of conduct for Makau-Tea.
               </p>
             </div>
           </div>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            We built Rant so students have a real, unfiltered outlet for campus reality.
-            To keep this sanctuary running and safe for everyone, please respect these eight simple rules.
+            We built Rant so students have a real, unfiltered outlet for campus
+            reality. To keep this sanctuary running and safe for everyone,
+            please respect these eight simple rules.
           </p>
         </div>
 

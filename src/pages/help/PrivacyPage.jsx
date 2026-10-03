@@ -30,7 +30,7 @@ const PrivacyPage = () => {
                 Privacy & Anonymity
               </h1>
               <p className="text-xs sm:text-sm text-slate-500">
-                Understanding how your identity is protected on Rantea.
+                Understanding how your identity is protected on Makau-Tea.
               </p>
             </div>
           </div>

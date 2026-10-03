@@ -1,74 +1,81 @@
-import React, { useState } from 'react';
-import MobileHeader from '../../components/navigation/MobileHeader';
-import { HelpCircle, ChevronDown, ChevronUp, Search, MessageSquare, ShieldAlert } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import MobileHeader from "../../components/navigation/MobileHeader";
+import {
+  HelpCircle,
+  ChevronDown,
+  ChevronUp,
+  Search,
+  MessageSquare,
+  ShieldAlert,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 const FAQS = [
   {
-    q: 'What is Rant?',
-    a: 'Rant is an unofficial student platform where students can share their thoughts, frustrations, funny experiences, and opinions about college life in a dedicated, supportive campus space.',
-    category: 'General',
+    q: "What is Makau-Tea?",
+    a: "Makau-Tea is an unofficial student platform where students can share their thoughts, frustrations, funny experiences, and opinions about college life in a dedicated, supportive campus space.",
+    category: "General",
   },
   {
-    q: 'Can I post anonymously?',
+    q: "Can I post anonymously?",
     a: 'Yes! When creating a rant or writing a comment/reply, you can toggle the "Post anonymously" checkbox. Your real name, avatar, and email will be hidden and replaced with an anonymous identity (e.g. "Anonymous Student" or an alias).',
-    category: 'Posting',
+    category: "Posting",
   },
   {
-    q: 'Can I edit my rant?',
+    q: "Can I edit my rant?",
     a: 'Yes. You can edit your own rant at any time by clicking the three-dots (⋮) menu on your post and selecting "Edit".',
-    category: 'Posting',
+    category: "Posting",
   },
   {
-    q: 'Can I delete my rant?',
-    a: 'Yes. You can delete your own rant whenever you wish from the three-dots (⋮) options menu. Deletion removes the rant and its comments.',
-    category: 'Posting',
+    q: "Can I delete my rant?",
+    a: "Yes. You can delete your own rant whenever you wish from the three-dots (⋮) options menu. Deletion removes the rant and its comments.",
+    category: "Posting",
   },
   {
-    q: 'Can I post a picture?',
-    a: 'Yes, if the post and photo comply with our community rules (no NSFW, no private screenshots with personal information, no copyrighted harassment material).',
-    category: 'Posting',
+    q: "Can I post a picture?",
+    a: "Yes, if the post and photo comply with our community rules (no NSFW, no private screenshots with personal information, no copyrighted harassment material).",
+    category: "Posting",
   },
   {
-    q: 'Can I rant about a professor?',
-    a: 'You can discuss classes, teaching experiences, grading policies, and college-related academic situations. However, you must NOT use the platform for targeted personal harassment, threats, slurs, or exposing private contact details or personal phone numbers.',
-    category: 'Moderation',
+    q: "Can I rant about a professor?",
+    a: "You can discuss classes, teaching experiences, grading policies, and college-related academic situations. However, you must NOT use the platform for targeted personal harassment, threats, slurs, or exposing private contact details or personal phone numbers.",
+    category: "Moderation",
   },
   {
-    q: 'Can I rant about another student?',
-    a: 'You can share your general campus experience, but do not expose personal private information (doxxing), post private chat screenshots, or use the platform to bully or harass someone.',
-    category: 'Moderation',
+    q: "Can I rant about another student?",
+    a: "You can share your general campus experience, but do not expose personal private information (doxxing), post private chat screenshots, or use the platform to bully or harass someone.",
+    category: "Moderation",
   },
   {
-    q: 'Who can see my anonymous rant?',
-    a: 'Other campus students can view your rant on the public feed, but your public identity (name, email, profile photo) is completely masked and never shown on the card.',
-    category: 'Privacy',
+    q: "Who can see my anonymous rant?",
+    a: "Other campus students can view your rant on the public feed, but your public identity (name, email, profile photo) is completely masked and never shown on the card.",
+    category: "Privacy",
   },
   {
-    q: 'What happens when I report something?',
-    a: 'The report is instantly sent to the platform moderators for review. Our moderation team assesses the reported content against our House Rules and will hide, restrict, or take disciplinary action if a violation has occurred.',
-    category: 'Moderation',
+    q: "What happens when I report something?",
+    a: "The report is instantly sent to the platform moderators for review. Our moderation team assesses the reported content against our House Rules and will hide, restrict, or take disciplinary action if a violation has occurred.",
+    category: "Moderation",
   },
   {
-    q: 'Can I report something because I don\'t like it?',
-    a: 'No. Disagreement or having a different opinion is not a rule violation. The report tool is strictly reserved for spam, hate speech, harassment, doxxing, and offensive violations.',
-    category: 'Moderation',
+    q: "Can I report something because I don't like it?",
+    a: "No. Disagreement or having a different opinion is not a rule violation. The report tool is strictly reserved for spam, hate speech, harassment, doxxing, and offensive violations.",
+    category: "Moderation",
   },
   {
-    q: 'Can I delete my account?',
-    a: 'Yes. You can manage or delete your account through your profile settings section.',
-    category: 'Account',
+    q: "Can I delete my account?",
+    a: "Yes. You can manage or delete your account through your profile settings section.",
+    category: "Account",
   },
   {
-    q: 'Who runs Rant?',
-    a: 'Rantea is built and maintained by independent student developers and university campus contributors passionate about open, healthy student discourse.',
-    category: 'General',
+    q: "Who runs Makau-Tea?",
+    a: "Makaut-Tea is built and maintained by independent student developers and university campus contributors passionate about open, healthy student discourse.",
+    category: "General",
   },
 ];
 
 const FaqPage = () => {
   const [openIndex, setOpenIndex] = useState(null);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
   const toggleAccordion = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -78,12 +85,16 @@ const FaqPage = () => {
     (item) =>
       item.q.toLowerCase().includes(search.toLowerCase()) ||
       item.a.toLowerCase().includes(search.toLowerCase()) ||
-      item.category.toLowerCase().includes(search.toLowerCase())
+      item.category.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
     <div className="min-h-screen pb-24 md:pb-12 max-w-2xl mx-auto w-full">
-      <MobileHeader title="Frequently Asked Questions" showBack backUrl="/help" />
+      <MobileHeader
+        title="Frequently Asked Questions"
+        showBack
+        backUrl="/help"
+      />
 
       <main className="px-4 py-4 space-y-6">
         {/* Hero Section */}
@@ -97,14 +108,14 @@ const FaqPage = () => {
                 Got Questions?
               </h1>
               <p className="text-xs sm:text-sm text-slate-500">
-                Answers to everything you need to know about Rantea.
+                Answers to everything you need to know about Makau-Tea.
               </p>
             </div>
           </div>
 
           {/* Search Box */}
-          <div className="relative pt-2">
-            <Search className="absolute left-3.5 top-5 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <div className="relative pt-2 flex items-center justify-center ">
+            <Search className="absolute left-4 top-7  -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
               value={search}
@@ -128,10 +139,10 @@ const FaqPage = () => {
               return (
                 <div
                   key={faq.q}
-                  className={`rounded-2xl border transition-all overflow-hidden ${
+                  className={`rounded-2xl border transition-all overflow-hidden p-2 ${
                     isOpen
-                      ? 'bg-white border-[var(--color-primary)] shadow-sm'
-                      : 'bg-white border-[var(--border-color)] hover:border-slate-300'
+                      ? "bg-white border-[var(--color-primary)] shadow-sm"
+                      : "bg-white border-[var(--border-color)] hover:border-slate-300"
                   }`}
                 >
                   <button
