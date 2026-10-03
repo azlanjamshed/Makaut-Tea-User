@@ -3,22 +3,8 @@ import Modal from "../common/Modal";
 import Select from "../common/Select";
 import Button from "../common/Button";
 import Avatar from "../common/Avatar";
-import { DEPARTMENTS } from "../../utils/constants";
+import { DEPARTMENTS, SEMESTERS } from "../../utils/constants";
 import { GraduationCap, BookOpen, Sparkles, ArrowRight } from "lucide-react";
-
-const SEMESTERS = [
-  "1st Semester (1st Year)",
-  "2nd Semester (1st Year)",
-  "3rd Semester (2nd Year)",
-  "4th Semester (2nd Year)",
-  "5th Semester (3rd Year)",
-  "6th Semester (3rd Year)",
-  "7th Semester (4th Year)",
-  "8th Semester (4th Year)",
-  "Postgraduate / MTech",
-  "Alumni",
-  "Faculty / Staff",
-];
 
 const OnboardingModal = ({ isOpen, user, onComplete }) => {
   const [department, setDepartment] = useState("");

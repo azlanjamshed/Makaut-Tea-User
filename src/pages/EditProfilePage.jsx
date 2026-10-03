@@ -7,7 +7,7 @@ import Select from '../components/common/Select';
 import Button from '../components/common/Button';
 import Avatar from '../components/common/Avatar';
 import ConfirmationModal from '../components/common/ConfirmationModal';
-import { DEPARTMENTS } from '../utils/constants';
+import { DEPARTMENTS, SEMESTERS } from '../utils/constants';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import * as usersApi from '../api/users';
@@ -184,9 +184,9 @@ const EditProfilePage = () => {
               onChange={(e) => setDepartment(e.target.value)}
             />
 
-            <Input
-              label="Semester / Year"
-              placeholder="e.g. 4th Sem / Year 2"
+            <Select
+              label="Semester"
+              options={semester && !SEMESTERS.includes(semester) ? [semester, ...SEMESTERS] : SEMESTERS}
               value={semester}
               onChange={(e) => setSemester(e.target.value)}
             />

@@ -11,6 +11,20 @@ export const DEPARTMENTS = [
   "Other",
 ];
 
+export const SEMESTERS = [
+  "1st Semester (1st Year)",
+  "2nd Semester (1st Year)",
+  "3rd Semester (2nd Year)",
+  "4th Semester (2nd Year)",
+  "5th Semester (3rd Year)",
+  "6th Semester (3rd Year)",
+  "7th Semester (4th Year)",
+  "8th Semester (4th Year)",
+  "Postgraduate / MTech",
+  "Alumni",
+  "Faculty / Staff",
+];
+
 export const REPORT_REASONS = [
   {
     id: "Harassment",
