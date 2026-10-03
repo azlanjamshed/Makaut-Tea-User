@@ -58,7 +58,11 @@ const RantCard = ({
   const authorName = isOfficial
     ? rant.user?.name || "Head of MAKAU-TEA Affairs"
     : rant.isAnonymous
-      ? rant.user?.anonymousUsername || rant.user?.name || "Anonymous"
+      ? rant.user?.anonymousUsername ||
+        rant.anonymousUsername ||
+        rant.user?.anonymousId ||
+        rant.anonymousId ||
+        "Anonymous"
       : rant.user?.name || "Student";
 
   const authorImage = isOfficial
@@ -190,7 +194,7 @@ const RantCard = ({
             </div>
 
             <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
-              {(rant.semester || rant.department) && (
+              {!rant.isAnonymous && (rant.semester || rant.department) && (
                 <>
                   <span
                     className={`font-medium truncate max-w-[150px] sm:max-w-xs ${isOfficial ? "text-purple-700" : "text-slate-600"}`}

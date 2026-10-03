@@ -128,15 +128,20 @@ const DesktopTrendingWidget = () => {
                 ) : (
                   <span className="font-semibold text-slate-900 truncate">
                     {hottestPost.isAnonymous
-                      ? "Anonymous"
+                      ? hottestPost.user?.anonymousUsername ||
+                        hottestPost.anonymousUsername ||
+                        hottestPost.user?.anonymousId ||
+                        hottestPost.anonymousId ||
+                        "Anonymous"
                       : hottestPost.user?.name || "Student"}
                   </span>
                 )}
-                {(hottestPost.semester || hottestPost.department) && (
-                  <span className="text-slate-500 text-[10px] shrink-0">
-                    · {hottestPost.semester || hottestPost.department}
-                  </span>
-                )}
+                {!hottestPost.isAnonymous &&
+                  (hottestPost.semester || hottestPost.department) && (
+                    <span className="text-slate-500 text-[10px] shrink-0">
+                      · {hottestPost.semester || hottestPost.department}
+                    </span>
+                  )}
               </div>
               <span className="text-[10px] text-slate-400 shrink-0 font-mono">
                 {timeAgo(hottestPost.createdAt)}

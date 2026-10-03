@@ -60,8 +60,8 @@ const PrivacyPage = () => {
                 <span>Publicly Visible</span>
               </span>
               <p className="text-xs text-slate-600">
-                Your name and avatar (only on non-anonymous posts), department /
-                semester tag, and post text.
+                Your name, avatar, and department / semester tag (only on
+                non-anonymous posts), and post text.
               </p>
             </div>
 
@@ -138,8 +138,8 @@ const PrivacyPage = () => {
                   <VenetianMask className="w-4 h-4 text-purple-700" />
                 </div>
                 <div>
-                  <span className="font-bold text-xs text-slate-900 block">
-                    Anonymous Student · IT
+                  <span className="font-bold text-xs text-slate-900 block font-mono">
+                    anon_student_42
                   </span>
                   <span className="text-[10px] text-slate-500">2h ago</span>
                 </div>
