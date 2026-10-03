@@ -1,5 +1,5 @@
-import React from 'react';
-import MobileHeader from '../../components/navigation/MobileHeader';
+import React from "react";
+import MobileHeader from "../../components/navigation/MobileHeader";
 import {
   HelpCircle,
   KeyRound,
@@ -12,65 +12,65 @@ import {
   ChevronRight,
   ExternalLink,
   Sparkles,
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 const HELP_CARDS = [
   {
-    to: '/profile/edit',
+    to: "/profile/edit",
     icon: KeyRound,
-    title: 'Account & Security',
-    desc: 'Update semester, profile picture, name, or password credentials.',
-    badge: 'Account',
+    title: "Account & Security",
+    desc: "Update semester, profile picture, name, or password credentials.",
+    badge: "Account",
   },
   {
-    to: '/rules',
+    to: "/rules",
     icon: Scroll,
-    title: 'House Rules',
-    desc: 'The eight core principles for posting and respectful campus expression.',
-    badge: 'Rules',
+    title: "House Rules",
+    desc: "The eight core principles for posting and respectful campus expression.",
+    badge: "Rules",
   },
   {
-    to: '/faq',
+    to: "/faq",
     icon: HelpCircle,
-    title: 'Frequently Asked Questions',
-    desc: 'Instant answers to common questions about posting, privacy, and reports.',
-    badge: 'FAQ',
+    title: "Frequently Asked Questions",
+    desc: "Instant answers to common questions about posting, privacy, and reports.",
+    badge: "FAQ",
   },
   {
-    to: '/privacy',
+    to: "/privacy",
     icon: Shield,
-    title: 'Privacy & Anonymity',
-    desc: 'See exactly how anonymous posts look and how your data is safeguarded.',
-    badge: 'Privacy',
+    title: "Privacy & Anonymity",
+    desc: "See exactly how anonymous posts look and how your data is safeguarded.",
+    badge: "Privacy",
   },
   {
-    to: '/reporting-guide',
+    to: "/reporting-guide",
     icon: AlertTriangle,
-    title: 'Reporting Guide',
-    desc: 'When to report content, what moderators review, and what not to report.',
-    badge: 'Safety',
+    title: "Reporting Guide",
+    desc: "When to report content, what moderators review, and what not to report.",
+    badge: "Safety",
   },
   {
-    to: '/feedback',
+    to: "/feedback",
     icon: MessageCircle,
-    title: 'Contact / Suggestion Box',
-    desc: 'Submit bug reports, feature suggestions, or direct notes to the team.',
-    badge: 'Feedback',
+    title: "Contact / Suggestion Box",
+    desc: "Submit bug reports, feature suggestions, or direct notes to the team.",
+    badge: "Feedback",
   },
   {
-    to: '/guidelines',
+    to: "/guidelines",
     icon: FileText,
-    title: 'Community Guidelines',
-    desc: 'Quick overview of what is allowed, cautioned, and strictly prohibited.',
-    badge: 'Conduct',
+    title: "Community Guidelines",
+    desc: "Quick overview of what is allowed, cautioned, and strictly prohibited.",
+    badge: "Conduct",
   },
   {
-    to: '/about',
+    to: "/about",
     icon: Info,
-    title: 'About Rantea',
-    desc: 'Why this platform exists and how it is built for campus students.',
-    badge: 'About',
+    title: "About Makau-Tea",
+    desc: "Why this platform exists and how it is built for campus students.",
+    badge: "About",
   },
 ];
 
@@ -96,7 +96,9 @@ const HelpSupportPage = () => {
             </div>
           </div>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed pt-1">
-            Need assistance with your account, curious about how anonymous masking functions, or want to report an issue? You're in the right place.
+            Need assistance with your account, curious about how anonymous
+            masking functions, or want to report an issue? You're in the right
+            place.
           </p>
         </div>
 
@@ -146,8 +148,11 @@ const HelpSupportPage = () => {
             <span>The 3-Second Golden Rule</span>
           </div>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            Vent about tests, bad food, tough attendance, parking, or professors generally.
-            <strong> Do not</strong> post private phone numbers, hostel room numbers, or personally malicious defamatory harassment targeting individuals.
+            Vent about tests, bad food, tough attendance, parking, or professors
+            generally.
+            <strong> Do not</strong> post private phone numbers, hostel room
+            numbers, or personally malicious defamatory harassment targeting
+            individuals.
           </p>
           <div className="pt-2">
             <Link
