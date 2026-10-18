@@ -19,19 +19,29 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   user-select: none;
+  -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Allow text selection inside posts and readable inputs */
+/* Allow text selection inside posts, comments, readable content, and inputs */
 p,
 span,
+a,
 h1,
 h2,
 h3,
 h4,
+h5,
+h6,
 input,
-textarea {
-  user-select: text;
+textarea,
+pre,
+code,
+blockquote,
+.select-text,
+[data-selectable="true"] {
+  user-select: text !important;
+  -webkit-user-select: text !important;
 }
 
 /* Custom Scrollbar styled for clean modern UI */

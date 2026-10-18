@@ -21,6 +21,7 @@ import {
 import MobileHeader from "../components/navigation/MobileHeader";
 import Button from "../components/common/Button";
 import EmptyState from "../components/common/EmptyState";
+import LinkifiedText from "../components/common/LinkifiedText";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { timeAgo, resolveImageUrl } from "../utils/helpers";
@@ -454,8 +455,8 @@ const AnnouncePage = () => {
                     </div>
 
                     {/* Body snippet */}
-                    <p className="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
-                      {req.text}
+                    <p className="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-wrap select-text cursor-text">
+                      <LinkifiedText text={req.text} />
                     </p>
 
                     {/* Metadata tags */}

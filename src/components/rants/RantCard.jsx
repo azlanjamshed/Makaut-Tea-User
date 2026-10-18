@@ -1,8 +1,9 @@
-import React, { useState, memo } from "react";
+import React, { useState, useRef, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   MoreVertical,
   Share2,
+  Copy,
   Flag,
   Edit3,
   Trash2,
@@ -14,6 +15,7 @@ import Avatar from "../common/Avatar";
 import Badge from "../common/Badge";
 import Card from "../common/Card";
 import ImageLightbox from "../common/ImageLightbox";
+import LinkifiedText from "../common/LinkifiedText";
 import ReactionBar from "./ReactionBar";
 import { timeAgo, resolveImageUrl } from "../../utils/helpers";
 import { useAuth } from "../../context/AuthContext";
@@ -33,7 +35,9 @@ const RantCard = ({
   const { showToast } = useToast();
   const [showMenu, setShowMenu] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [copiedText, setCopiedText] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const dragCoordsRef = useRef({ x: 0, y: 0 });
 
   if (!rant) return null;
 
@@ -81,7 +85,26 @@ const RantCard = ({
     }
   };
 
-  const handleCardClick = () => {
+  const handleMouseDown = (e) => {
+    dragCoordsRef.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleCardClick = (e) => {
+    // 1. If user highlighted text to copy, prevent card click navigation
+    const selection = window.getSelection();
+    if (selection && selection.toString().trim().length > 0) {
+      return;
+    }
+
+    // 2. If mouse moved significantly between mousedown and mouseup (drag gesture), do not navigate
+    if (e && e.clientX !== undefined) {
+      const dx = Math.abs(e.clientX - dragCoordsRef.current.x);
+      const dy = Math.abs(e.clientY - dragCoordsRef.current.y);
+      if (dx > 6 || dy > 6) {
+        return;
+      }
+    }
+
     if (!isDetail) {
       navigate(`/rants/${rant.id || rant._id}`);
     }
@@ -109,6 +132,20 @@ const RantCard = ({
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleCopyText = async (e) => {
+    e.stopPropagation();
+    setShowMenu(false);
+    if (!rant.text) return;
+    try {
+      await navigator.clipboard.writeText(rant.text);
+      setCopiedText(true);
+      showToast("Post text copied to clipboard!", "success");
+      setTimeout(() => setCopiedText(false), 2000);
+    } catch (_err) {
+      showToast("Failed to copy text", "error");
+    }
+  };
+
   const imageSrc = rant.image
     ? resolveImageUrl(rant.image, isDetail ? 'detail' : 'feed')
     : null;
@@ -117,6 +154,7 @@ const RantCard = ({
   return (
     <Card
       onClick={handleCardClick}
+      onMouseDown={handleMouseDown}
       hoverable={!isDetail}
       className={`relative overflow-visible group ${
         isOfficial
@@ -246,6 +284,19 @@ const RantCard = ({
                   <span>{copied ? "Copied Link!" : "Share / Copy Link"}</span>
                 </button>
 
+                <button
+                  type="button"
+                  onClick={handleCopyText}
+                  className="w-full flex items-center gap-2.5 px-3.5 py-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors"
+                >
+                  {copiedText ? (
+                    <Check className="w-4 h-4 text-emerald-500" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                  <span>{copiedText ? "Copied Text!" : "Copy Post Text"}</span>
+                </button>
+
                 {isOwner ? (
                   <>
                     <button
@@ -294,9 +345,9 @@ const RantCard = ({
       </div>
 
       {/* Rant Text Body */}
-      <div className="text-slate-800 text-sm sm:text-base leading-relaxed break-words whitespace-pre-line font-normal mb-3">
-        {rant.text}
-      </div>
+      <p className="text-slate-800 text-sm sm:text-base leading-relaxed break-words whitespace-pre-line font-normal mb-3 select-text cursor-text">
+        <LinkifiedText text={rant.text} />
+      </p>
 
       {/* Optional Attached Image */}
       {imageSrc && (

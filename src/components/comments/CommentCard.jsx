@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Reply, Trash2, Flag, ChevronDown, ChevronUp, Send, ShieldCheck } from 'lucide-react';
+import { Reply, Trash2, Flag, ChevronDown, ChevronUp, Send, ShieldCheck, Copy, Check } from 'lucide-react';
 import Avatar from '../common/Avatar';
 import Badge from '../common/Badge';
+import LinkifiedText from '../common/LinkifiedText';
 import { timeAgo } from '../../utils/helpers';
 import { useAuth } from '../../context/AuthContext';
 import * as commentsApi from '../../api/comments';
@@ -19,6 +20,7 @@ const CommentCard = ({
   const { user, isAuthenticated } = useAuth();
   const { showToast } = useToast();
 
+  const [copiedComment, setCopiedComment] = useState(false);
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [replyText, setReplyText] = useState('');
   const [isAnonymousReply, setIsAnonymousReply] = useState(false);
@@ -120,6 +122,18 @@ const CommentCard = ({
     }
   };
 
+  const handleCopyComment = async (textToCopy) => {
+    if (!textToCopy) return;
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      setCopiedComment(true);
+      showToast('Comment copied to clipboard!', 'success');
+      setTimeout(() => setCopiedComment(false), 2000);
+    } catch (_err) {
+      showToast('Failed to copy comment', 'error');
+    }
+  };
+
   const handleDeleteReply = async (replyId) => {
     try {
       await commentsApi.deleteReply(comment.id || comment._id, replyId);
@@ -176,6 +190,19 @@ const CommentCard = ({
         <div className="flex items-center gap-1 text-slate-400">
           <button
             type="button"
+            onClick={() => handleCopyComment(comment.text)}
+            className="p-1 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors"
+            title="Copy comment text"
+          >
+            {copiedComment ? (
+              <Check className="w-3.5 h-3.5 text-emerald-500" />
+            ) : (
+              <Copy className="w-3.5 h-3.5" />
+            )}
+          </button>
+
+          <button
+            type="button"
             onClick={() => setShowReplyInput((prev) => !prev)}
             className="p-1 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors"
             title="Reply"
@@ -206,8 +233,8 @@ const CommentCard = ({
       </div>
 
       {/* Comment Body */}
-      <p className="text-xs sm:text-sm text-slate-800 pl-10 leading-relaxed break-words whitespace-pre-line">
-        {comment.text}
+      <p className="text-xs sm:text-sm text-slate-800 pl-10 leading-relaxed break-words whitespace-pre-line select-text cursor-text">
+        <LinkifiedText text={comment.text} />
       </p>
 
       {/* Inline Reply Input */}
@@ -359,8 +386,8 @@ const CommentCard = ({
                         </button>
                       )}
                     </div>
-                    <p className="text-slate-700 pl-6 leading-relaxed break-words">
-                      {reply.text}
+                    <p className="text-slate-700 pl-6 leading-relaxed break-words whitespace-pre-line select-text cursor-text">
+                      <LinkifiedText text={reply.text} />
                     </p>
                   </div>
                 );
